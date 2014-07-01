@@ -482,7 +482,7 @@ namespace OutlookMeetingAdd
             foreach (Suggestion suggestion in results.Suggestions)
             {
                 textBox1.Text+=("Suggested date:"+suggestion.Date.ToShortDateString()+"\r\n");
-                textBox1.Text+=("Suggested meeting times:\n");
+                textBox1.Text+=("Suggested meeting times:\n"+suggestion.Quality);
                 
                 if(suggestion.TimeSuggestions!=null)
                     MessageBox.Show("what are you doing"); 
