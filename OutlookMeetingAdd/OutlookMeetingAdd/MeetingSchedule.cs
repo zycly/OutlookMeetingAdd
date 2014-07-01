@@ -6,6 +6,8 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Net;
+using Microsoft.Exchange.WebServices;
 using Microsoft.Exchange.WebServices.Data;
 using System.Text.RegularExpressions;
 using System.Collections;
@@ -112,7 +114,6 @@ namespace OutlookMeetingAdd
             #endregion
 
 
-
             //////////////////////获取忙闲信息///////////////////////////////////////////////////////
             
             AvailabilityOptions myOptions = new AvailabilityOptions();
@@ -126,8 +127,7 @@ namespace OutlookMeetingAdd
             //end = Convert.ToDateTime(dateTimePicker2.Value.Year.ToString() + "-" + dateTimePicker2.Value.Month.ToString() + "-" + dateTimePicker2.Value.Day.ToString() + " " + dateTimePicker4.Value.Hour.ToString() + ":" + dateTimePicker4.Value.Minute.ToString());
             start = new DateTime(dateTimePicker1.Value.Year, dateTimePicker1.Value.Month, dateTimePicker1.Value.Day, Convert.ToDateTime(comboBox1.SelectedItem.ToString()).Hour, Convert.ToDateTime(comboBox1.SelectedItem.ToString()).Minute, 0);
             end =   new DateTime(dateTimePicker2.Value.Year, dateTimePicker2.Value.Month, dateTimePicker2.Value.Day, Convert.ToDateTime(comboBox3.SelectedItem.ToString()).Hour, Convert.ToDateTime(comboBox3.SelectedItem.ToString()).Minute, 0);
-            //MessageBox.Show(start.ToString());
-            //MessageBox.Show(end.ToString());
+      
             #region
 
       
@@ -412,6 +412,7 @@ namespace OutlookMeetingAdd
         public Outlook.AppointmentItem item;
         private void button2_Click(object sender, EventArgs e)
         {
+            #region
             service = new ExchangeService(ExchangeVersion.Exchange2010_SP1);
 
             //以windows账户用户名和密码登陆
@@ -422,32 +423,35 @@ namespace OutlookMeetingAdd
             //service.AutodiscoverUrl("yongchan.zhang@ericsson.com", RedirectionUrlValidationCallback);
             //手动设置exchange服务器地址
             service.Url = new Uri("https://mail-ao.internal.ericsson.com/EWS/Exchange.asmx");
+            #endregion
 
 
+            #region
             Outlook.Application app = new Outlook.Application();
             List<AttendeeInfo> attendees = new List<AttendeeInfo>();
-         
-    
+            string pattern_3=" ";
+            string replacement = ".";
+            Regex cheat = new Regex(pattern_3);
+
             if (app.ActiveWindow() is Outlook._Inspector)
             {
                 Outlook.Inspector inspector = app.ActiveInspector();
                 if (inspector.CurrentItem is Outlook.AppointmentItem)
                 {
                     item = inspector.CurrentItem;
-                    foreach(Outlook.Recipient acquird in item.Recipients)
+                    foreach (Outlook.Recipient acquird in item.Recipients)
                     {
                         attendees.Add(new AttendeeInfo()
                         {
-                            SmtpAddress = acquird.Address,
+                            SmtpAddress = cheat.Replace(acquird.Name,replacement)+"@ericsson.com",
                             // AttendeeType = MeetingAttendeeType.Required
                         });
-                    }
+                     }
+
+
                 }
-
-
                 //////////////////////测试邮箱名是否被正确加载////////////////////////////
-                /*
-                 EmailMessage message = new EmailMessage(service);
+                /*EmailMessage message = new EmailMessage(service);
 
                 // Set properties on the email message.
                 message.Subject = "Company Soccer Team";
@@ -456,48 +460,74 @@ namespace OutlookMeetingAdd
 
                 // Send the email message and save a copy.
                 // This method call results in a CreateItem call to EWS.
-                message.Send();
-                 */
+                message.Send();*/
             }
+            #endregion
+
+
+
+            Hashtable hash=new Hashtable();
 
             AvailabilityOptions availabilityOptions = new AvailabilityOptions();
-
-
             var dateSpan = item.End.Subtract(item.Start);
-            availabilityOptions.MeetingDuration = dateSpan.Hours*60+dateSpan.Minutes;
-            //MessageBox.Show(availabilityOptions.MeetingDuration.ToString());
+            availabilityOptions.MeetingDuration = dateSpan.Hours * 60 + dateSpan.Minutes;
             availabilityOptions.MaximumNonWorkHoursSuggestionsPerDay = 0;
-            availabilityOptions.MaximumSuggestionsPerDay = 5;
-
+            availabilityOptions.MaximumSuggestionsPerDay =5;
+            availabilityOptions.GoodSuggestionThreshold = 49;
             availabilityOptions.MinimumSuggestionQuality = SuggestionQuality.Good;
-            availabilityOptions.DetailedSuggestionsWindow = new TimeWindow(item.Start, item.Start.AddDays(1));
-            availabilityOptions.RequestedFreeBusyView = FreeBusyViewType.FreeBusyMerged;
+            availabilityOptions.DetailedSuggestionsWindow = new TimeWindow(item.Start,item.Start.AddDays(1));
+            availabilityOptions.RequestedFreeBusyView = FreeBusyViewType.FreeBusy;
 
             GetUserAvailabilityResults results = service.GetUserAvailability(attendees,
                                                                    availabilityOptions.DetailedSuggestionsWindow,
                                                                    AvailabilityData.FreeBusyAndSuggestions,
                                                                    availabilityOptions);
 
-
+            
+            DateTime [] str=new DateTime[results.Suggestions.Count];
+            int k = 0;
+            TimeSpan different;
+            DateTime temp;
+            int t = 0;
             foreach (Suggestion suggestion in results.Suggestions)
-            {
-                textBox1.Text+=("Suggested date:"+suggestion.Date.ToShortDateString()+"\r\n");
-                textBox1.Text+=("Suggested meeting times:\n"+suggestion.Quality);
-                
-                if(suggestion.TimeSuggestions!=null)
-                    MessageBox.Show("what are you doing"); 
+            { 
+               /*for (int i = 0; i < results.Suggestions.Count; i++)
+			   {
+			        str[i]=suggestion.TimeSuggestions[i].MeetingTime;
+    		    }*/
                 foreach (TimeSuggestion timeSuggestion in suggestion.TimeSuggestions)
                 {
-                  
-                //    textBox1.Text+=(timeSuggestion.MeetingTime.ToString());
-                    MessageBox.Show("what are you doing"); 
+                    str[t] = suggestion.TimeSuggestions[t].MeetingTime;
+                    t++;
                 }
-                
-
             }
-           
-            
-           
+            MessageBox.Show(results.Suggestions.Count.ToString());
+
+            for (int s = 0; s < results.Suggestions.Count-1; s++)
+            {
+                k = s;
+                for (int j = s+1; j < results.Suggestions.Count; j++)
+                {
+                    different=str[j].Subtract(item.Start);
+                    if (Math.Abs(different.Hours * 60 + different.Minutes) < Math.Abs(str[k].Subtract(item.Start).Hours * 60 + str[k].Subtract(item.Start).Minutes))
+                        k = j;
+                }
+                if (k != s)
+                {
+                    temp = str[k];
+                    str[k] = str[s];
+                    str[s] = temp;
+                }
+            }
+
+            for (int g = 0; g < results.Suggestions.Count; g++)
+            {
+                textBox1.Text+=(str[g].ToString()+"\r\n");
+            }
+
+
+
+        
         }
     }
 }
