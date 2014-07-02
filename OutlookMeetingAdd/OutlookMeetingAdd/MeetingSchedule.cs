@@ -6,7 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using System.Net;
+using System.Windows;
 using Microsoft.Exchange.WebServices;
 using Microsoft.Exchange.WebServices.Data;
 using System.Text.RegularExpressions;
@@ -464,15 +464,11 @@ namespace OutlookMeetingAdd
             }
             #endregion
 
-
-
-            Hashtable hash=new Hashtable();
-
             AvailabilityOptions availabilityOptions = new AvailabilityOptions();
             var dateSpan = item.End.Subtract(item.Start);
             availabilityOptions.MeetingDuration = dateSpan.Hours * 60 + dateSpan.Minutes;
             availabilityOptions.MaximumNonWorkHoursSuggestionsPerDay = 0;
-            availabilityOptions.MaximumSuggestionsPerDay =5;
+            availabilityOptions.MaximumSuggestionsPerDay =10;
             availabilityOptions.GoodSuggestionThreshold = 49;
             availabilityOptions.MinimumSuggestionQuality = SuggestionQuality.Good;
             availabilityOptions.DetailedSuggestionsWindow = new TimeWindow(item.Start,item.Start.AddDays(1));
@@ -484,31 +480,29 @@ namespace OutlookMeetingAdd
                                                                    availabilityOptions);
 
             
-            DateTime [] str=new DateTime[results.Suggestions.Count];
-            int k = 0;
+          
+            
             TimeSpan different;
-            DateTime temp;
-            int t = 0;
+            List<DateTime> str = new List<DateTime>(); 
+           
             foreach (Suggestion suggestion in results.Suggestions)
             { 
-               /*for (int i = 0; i < results.Suggestions.Count; i++)
-			   {
-			        str[i]=suggestion.TimeSuggestions[i].MeetingTime;
-    		    }*/
                 foreach (TimeSuggestion timeSuggestion in suggestion.TimeSuggestions)
                 {
-                    str[t] = suggestion.TimeSuggestions[t].MeetingTime;
-                    t++;
+                    if (timeSuggestion.MeetingTime.Hour >= 9)
+                        str.Add(timeSuggestion.MeetingTime);            
                 }
             }
-            MessageBox.Show(results.Suggestions.Count.ToString());
 
-            for (int s = 0; s < results.Suggestions.Count-1; s++)
+
+            int k = 0;
+            DateTime temp;
+            for (int s = 0; s < str.Count-1; s++)
             {
                 k = s;
-                for (int j = s+1; j < results.Suggestions.Count; j++)
+                for (int j = s + 1; j < str.Count; j++)
                 {
-                    different=str[j].Subtract(item.Start);
+                    different = str[j].Subtract(item.Start);
                     if (Math.Abs(different.Hours * 60 + different.Minutes) < Math.Abs(str[k].Subtract(item.Start).Hours * 60 + str[k].Subtract(item.Start).Minutes))
                         k = j;
                 }
@@ -519,12 +513,6 @@ namespace OutlookMeetingAdd
                     str[s] = temp;
                 }
             }
-
-            for (int g = 0; g < results.Suggestions.Count; g++)
-            {
-                textBox1.Text+=(str[g].ToString()+"\r\n");
-            }
-
 
 
         
