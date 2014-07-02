@@ -28,6 +28,8 @@ namespace OutlookMeetingAdd
         private DateTime end;
         private int Global_1 = 0;
         private int Global_2 = 0;
+
+
         public Outlook.AppointmentItem item;
         public ExchangeService service;
 
@@ -40,7 +42,7 @@ namespace OutlookMeetingAdd
             }
         }
 
-        #region
+
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
 
@@ -71,9 +73,7 @@ namespace OutlookMeetingAdd
             }
            
         }
-        #endregion
-     
-
+        
 
         private void dataGridView2_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
         {
@@ -102,6 +102,7 @@ namespace OutlookMeetingAdd
                 }
                 #endregion
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 
                 ////////////////////////////////datagrid1初始化////////////////////////////////////////////////////////////////////
@@ -133,6 +134,7 @@ namespace OutlookMeetingAdd
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+
                 /////////////////////////获取某一时间段内的所有会议数据信息/////////////////////////////////////////////////////////
                 #region
                 /*
@@ -162,30 +164,25 @@ namespace OutlookMeetingAdd
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-                //////////////////////获取会议室信息/////////////////////////////////////////////////////////////////////////////
 
+                ///////////////////////显示会议室free/busy/////////////////////////////////////////////////////////////////////////  
+                #region
                 AvailabilityOptions myOptions = new AvailabilityOptions();
                 myOptions.RequestedFreeBusyView = FreeBusyViewType.FreeBusyMerged;
                 // Return a set of free/busy times.
                 GetUserAvailabilityResults freeBusyResults = service.GetUserAvailability(attendees,
                                                                                 new TimeWindow(DateTime.Now, DateTime.Now.AddDays(7)),
                                                                                 AvailabilityData.FreeBusy, myOptions);
-
-
                 DataGridView dg = (DataGridView)sender;
 
+                
                 if (dg.Columns[e.ColumnIndex].Name == "Suggested Meeting Time")
                 {
                     start =Convert.ToDateTime(dg.Rows[e.RowIndex].Cells[0].Value);
                     end = Convert.ToDateTime(dg.Rows[e.RowIndex].Cells[0].Tag);
                 }
-                MessageBox.Show(start.ToString()+"\r\n");
-                MessageBox.Show(end.ToString());
-                #region
 
-
-
-                ///////////////////////显示会议室free/busy////////////////////////////////////////////////   
+                
 
                 int count = 0;
                 int test = 0;             /////调试计数
@@ -433,16 +430,11 @@ namespace OutlookMeetingAdd
             this.comboBox3.SelectedIndex = index + 1;
          }
 
-
-
-
-
-
         
         private void button2_Click(object sender, EventArgs e)
         {
            
-            ////////////////////////////////////获取与会人时间信息//////////////////////////////////////////////////////////////
+            ////////////////////////////////////获取与会人Email////////////////////////////////////////////////////////////////
             #region
             Outlook.Application app = new Outlook.Application();
             List<AttendeeInfo> attendees = new List<AttendeeInfo>();
@@ -512,15 +504,15 @@ namespace OutlookMeetingAdd
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-
+            ///////////////////////////////////////获取与会人时间信息////////////////////////////////////////////////////////////
             #region
             AvailabilityOptions availabilityOptions = new AvailabilityOptions();
             var dateSpan = item.End.Subtract(item.Start);
             availabilityOptions.MeetingDuration = dateSpan.Hours * 60 + dateSpan.Minutes;
             availabilityOptions.MaximumNonWorkHoursSuggestionsPerDay = 0;
-            availabilityOptions.MaximumSuggestionsPerDay = 10;
+            availabilityOptions.MaximumSuggestionsPerDay = 20;
             availabilityOptions.GoodSuggestionThreshold = 49;
-            availabilityOptions.MinimumSuggestionQuality = SuggestionQuality.Good;
+            availabilityOptions.MinimumSuggestionQuality = SuggestionQuality.Excellent;
             availabilityOptions.DetailedSuggestionsWindow = new TimeWindow(item.Start, item.Start.AddDays(1));
             availabilityOptions.RequestedFreeBusyView = FreeBusyViewType.FreeBusy;
 
@@ -540,11 +532,16 @@ namespace OutlookMeetingAdd
                 foreach (TimeSuggestion timeSuggestion in suggestion.TimeSuggestions)
                 {
                     if (timeSuggestion.MeetingTime.Hour >= 9)
+                    {
                         str.Add(timeSuggestion.MeetingTime);
+                    }
                 }
             }
+            #endregion
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
+            ///////////////////////////////////////对推荐时间进行排序////////////////////////////////////////////////////////////
+            #region
             int k = 0;
             DateTime temp;
             for (int s = 0; s < str.Count - 1; s++)
@@ -563,11 +560,8 @@ namespace OutlookMeetingAdd
                     str[s] = temp;
                 }
             }
-            #endregion
-
-
-        
-            for (int i = 0; i < 5; i++)
+         
+            for (int i = 0; i < str.Count; i++)
 			{
 			     DataGridViewRow row = new DataGridViewRow();
                  DataGridViewButtonCell btn = new DataGridViewButtonCell();
@@ -577,9 +571,9 @@ namespace OutlookMeetingAdd
                  row.Cells.Add(btn);
                  dataGridView2.Rows.Add(row);
 			}
-
             str.Clear();
-
+            #endregion
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         }
     }
 }
