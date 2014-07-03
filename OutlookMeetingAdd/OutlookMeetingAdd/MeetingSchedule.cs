@@ -433,9 +433,6 @@ namespace OutlookMeetingAdd
         
         private void button2_Click(object sender, EventArgs e)
         {
-           ///////////////////////////////////This is my first time to use git coroperation////////////////////////////////////
-
-
             ////////////////////////////////////获取与会人Email////////////////////////////////////////////////////////////////
             #region
             Outlook.Application app = new Outlook.Application();
@@ -473,9 +470,9 @@ namespace OutlookMeetingAdd
                 // This method call results in a CreateItem call to EWS.
                 message.Send();*/
             }
+            MessageBox.Show(attendees.Count.ToString());
             #endregion
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 
             ///////////////////////////////////////datagridview2设置////////////////////////////////////////////////////////////
@@ -507,7 +504,6 @@ namespace OutlookMeetingAdd
 
 
             ///////////////////////////////////////获取与会人时间信息////////////////////////////////////////////////////////////
-            #region
             AvailabilityOptions availabilityOptions = new AvailabilityOptions();
             var dateSpan = item.End.Subtract(item.Start);
             availabilityOptions.MeetingDuration = dateSpan.Hours * 60 + dateSpan.Minutes;
@@ -525,44 +521,59 @@ namespace OutlookMeetingAdd
 
 
 
-
-            TimeSpan different;
+            bool suggestion_flag=true;
             List<DateTime> str = new List<DateTime>();
-
-            foreach (Suggestion suggestion in results.Suggestions)
+            foreach (AttendeeAvailability availability in results.AttendeesAvailability)
             {
-                foreach (TimeSuggestion timeSuggestion in suggestion.TimeSuggestions)
+               // MessageBox.Show(availability.CalendarEvents.Count.ToString());
+                foreach (CalendarEvent calEvent in availability.CalendarEvents)
                 {
-                    if (timeSuggestion.MeetingTime.Hour >= 9)
+                    MessageBox.Show(calEvent.StartTime+" "+calEvent.EndTime+"\r\n");
+                    if ((DateTime.Compare(calEvent.StartTime, item.Start) <= 0 && DateTime.Compare(calEvent.EndTime, item.End) >= 0) || (DateTime.Compare(calEvent.EndTime, item.End) < 0 && DateTime.Compare(calEvent.EndTime, item.Start) > 0) || (DateTime.Compare(calEvent.StartTime, item.End) < 0 && DateTime.Compare(calEvent.StartTime, item.Start) > 0))
                     {
-                        str.Add(timeSuggestion.MeetingTime);
+                        suggestion_flag = false;
                     }
                 }
             }
-            #endregion
-            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-            ///////////////////////////////////////对推荐时间进行排序////////////////////////////////////////////////////////////
-            #region
-            int k = 0;
-            DateTime temp;
-            for (int s = 0; s < str.Count - 1; s++)
+            if (!suggestion_flag)
             {
-                k = s;
-                for (int j = s + 1; j < str.Count; j++)
+                TimeSpan different;
+                foreach (Suggestion suggestion in results.Suggestions)
                 {
-                    different = str[j].Subtract(item.Start);
-                    if (Math.Abs(different.Hours * 60 + different.Minutes) < Math.Abs(str[k].Subtract(item.Start).Hours * 60 + str[k].Subtract(item.Start).Minutes))
-                        k = j;
+                    foreach (TimeSuggestion timeSuggestion in suggestion.TimeSuggestions)
+                    {
+                        if (timeSuggestion.MeetingTime.Hour >= 9)
+                        {
+                            str.Add(timeSuggestion.MeetingTime);
+                        }
+                    }
                 }
-                if (k != s)
+
+                int k = 0;
+                DateTime temp;
+                for (int s = 0; s < str.Count - 1; s++)
                 {
-                    temp = str[k];
-                    str[k] = str[s];
-                    str[s] = temp;
+                    k = s;
+                    for (int j = s + 1; j < str.Count; j++)
+                    {
+                        different = str[j].Subtract(item.Start);
+                        if (Math.Abs(different.Hours * 60 + different.Minutes) < Math.Abs(str[k].Subtract(item.Start).Hours * 60 + str[k].Subtract(item.Start).Minutes))
+                            k = j;
+                    }
+                    if (k != s)
+                    {
+                        temp = str[k];
+                        str[k] = str[s];
+                        str[s] = temp;
+                    }
                 }
             }
-         
+            else
+                str.Add(item.Start);
+
+
+            MessageBox.Show(str.Count.ToString());
             for (int i = 0; i < str.Count; i++)
 			{
 			     DataGridViewRow row = new DataGridViewRow();
@@ -574,7 +585,6 @@ namespace OutlookMeetingAdd
                  dataGridView2.Rows.Add(row);
 			}
             str.Clear();
-            #endregion
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         }
     }
