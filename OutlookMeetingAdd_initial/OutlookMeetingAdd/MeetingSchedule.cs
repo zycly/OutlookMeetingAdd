@@ -12,7 +12,7 @@ using System.Collections;
 using System.Collections.Specialized;
 using Outlook = Microsoft.Office.Interop.Outlook;
 
-
+//////////////////////////////////////////////Initial version/////////////////////////////////////////////
 namespace OutlookMeetingAdd
 {
     public partial class MeetingSchedule : Form
@@ -21,7 +21,7 @@ namespace OutlookMeetingAdd
         {
             InitializeComponent();   
         }
-
+                          
         private DateTime start;
         private DateTime end;
         private int Global = 0;
