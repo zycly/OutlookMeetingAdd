@@ -1,0 +1,48 @@
+c:\users\ezhgyon\documents\visual studio 2010\Projects\OutlookMeetingAdd\OutlookMeetingAdd\obj\Debug\OutlookMeetingAdd.csprojResolveAssemblyReference.cache
+c:\users\ezhgyon\documents\visual studio 2010\Projects\OutlookMeetingAdd\OutlookMeetingAdd\obj\Debug\OutlookMeetingAdd.Properties.Resources.resources
+c:\users\ezhgyon\documents\visual studio 2010\Projects\OutlookMeetingAdd\OutlookMeetingAdd\obj\Debug\OutlookMeetingAdd.Ribbon1.resources
+c:\users\ezhgyon\documents\visual studio 2010\Projects\OutlookMeetingAdd\OutlookMeetingAdd\obj\Debug\OutlookMeetingAdd.csproj.GenerateResource.Cache
+c:\users\ezhgyon\documents\visual studio 2010\Projects\OutlookMeetingAdd\OutlookMeetingAdd\bin\Debug\OutlookMeetingAdd.dll
+c:\users\ezhgyon\documents\visual studio 2010\Projects\OutlookMeetingAdd\OutlookMeetingAdd\bin\Debug\OutlookMeetingAdd.pdb
+c:\users\ezhgyon\documents\visual studio 2010\Projects\OutlookMeetingAdd\OutlookMeetingAdd\bin\Debug\OutlookMeetingAdd.dll.manifest
+c:\users\ezhgyon\documents\visual studio 2010\Projects\OutlookMeetingAdd\OutlookMeetingAdd\bin\Debug\OutlookMeetingAdd.vsto
+c:\users\ezhgyon\documents\visual studio 2010\Projects\OutlookMeetingAdd\OutlookMeetingAdd\bin\Debug\Microsoft.Office.Tools.Common.v4.0.Utilities.dll
+c:\users\ezhgyon\documents\visual studio 2010\Projects\OutlookMeetingAdd\OutlookMeetingAdd\bin\Debug\Microsoft.Office.Tools.Outlook.v4.0.Utilities.dll
+c:\users\ezhgyon\documents\visual studio 2010\Projects\OutlookMeetingAdd\OutlookMeetingAdd\bin\Debug\Microsoft.Office.Tools.Common.v4.0.Utilities.xml
+c:\users\ezhgyon\documents\visual studio 2010\Projects\OutlookMeetingAdd\OutlookMeetingAdd\bin\Debug\Microsoft.Office.Tools.Outlook.v4.0.Utilities.xml
+c:\users\ezhgyon\documents\visual studio 2010\Projects\OutlookMeetingAdd\OutlookMeetingAdd\obj\Debug\OutlookMeetingAdd.dll
+c:\users\ezhgyon\documents\visual studio 2010\Projects\OutlookMeetingAdd\OutlookMeetingAdd\obj\Debug\OutlookMeetingAdd.pdb
+C:\Users\ezhgyon\Documents\Visual Studio 2010\Projects\OutlookMeetingAdd\OutlookMeetingAdd\obj\Debug\OutlookMeetingAdd.MeetingSchedule.resources
+C:\Users\ezhgyon\Documents\Visual Studio 2010\Projects\OutlookMeetingAdd\OutlookMeetingAdd\bin\Debug\OutlookMeetingAdd.dll.config
+H:\OutlookMeetingAdd\OutlookMeetingAdd\bin\Debug\OutlookMeetingAdd.dll.config
+H:\OutlookMeetingAdd\OutlookMeetingAdd\bin\Debug\OutlookMeetingAdd.dll
+H:\OutlookMeetingAdd\OutlookMeetingAdd\bin\Debug\OutlookMeetingAdd.pdb
+H:\OutlookMeetingAdd\OutlookMeetingAdd\bin\Debug\OutlookMeetingAdd.dll.manifest
+H:\OutlookMeetingAdd\OutlookMeetingAdd\bin\Debug\OutlookMeetingAdd.vsto
+H:\OutlookMeetingAdd\OutlookMeetingAdd\bin\Debug\Microsoft.Office.Tools.Common.v4.0.Utilities.dll
+H:\OutlookMeetingAdd\OutlookMeetingAdd\bin\Debug\Microsoft.Office.Tools.Outlook.v4.0.Utilities.dll
+H:\OutlookMeetingAdd\OutlookMeetingAdd\bin\Debug\Microsoft.Office.Tools.Common.v4.0.Utilities.xml
+H:\OutlookMeetingAdd\OutlookMeetingAdd\bin\Debug\Microsoft.Office.Tools.Outlook.v4.0.Utilities.xml
+H:\OutlookMeetingAdd\OutlookMeetingAdd\obj\Debug\OutlookMeetingAdd.csprojResolveAssemblyReference.cache
+H:\OutlookMeetingAdd\OutlookMeetingAdd\obj\Debug\OutlookMeetingAdd.MeetingSchedule.resources
+H:\OutlookMeetingAdd\OutlookMeetingAdd\obj\Debug\OutlookMeetingAdd.Properties.Resources.resources
+H:\OutlookMeetingAdd\OutlookMeetingAdd\obj\Debug\OutlookMeetingAdd.Ribbon1.resources
+H:\OutlookMeetingAdd\OutlookMeetingAdd\obj\Debug\OutlookMeetingAdd.csproj.GenerateResource.Cache
+H:\OutlookMeetingAdd\OutlookMeetingAdd\obj\Debug\OutlookMeetingAdd.dll
+H:\OutlookMeetingAdd\OutlookMeetingAdd\obj\Debug\OutlookMeetingAdd.pdb
+C:\Users\ezhgyon\Desktop\OutlookMeetingAdd\OutlookMeetingAdd\bin\Debug\OutlookMeetingAdd.dll.config
+C:\Users\ezhgyon\Desktop\OutlookMeetingAdd\OutlookMeetingAdd\bin\Debug\OutlookMeetingAdd.dll
+C:\Users\ezhgyon\Desktop\OutlookMeetingAdd\OutlookMeetingAdd\bin\Debug\OutlookMeetingAdd.pdb
+C:\Users\ezhgyon\Desktop\OutlookMeetingAdd\OutlookMeetingAdd\bin\Debug\OutlookMeetingAdd.dll.manifest
+C:\Users\ezhgyon\Desktop\OutlookMeetingAdd\OutlookMeetingAdd\bin\Debug\OutlookMeetingAdd.vsto
+C:\Users\ezhgyon\Desktop\OutlookMeetingAdd\OutlookMeetingAdd\bin\Debug\Microsoft.Office.Tools.Common.v4.0.Utilities.dll
+C:\Users\ezhgyon\Desktop\OutlookMeetingAdd\OutlookMeetingAdd\bin\Debug\Microsoft.Office.Tools.Outlook.v4.0.Utilities.dll
+C:\Users\ezhgyon\Desktop\OutlookMeetingAdd\OutlookMeetingAdd\bin\Debug\Microsoft.Office.Tools.Common.v4.0.Utilities.xml
+C:\Users\ezhgyon\Desktop\OutlookMeetingAdd\OutlookMeetingAdd\bin\Debug\Microsoft.Office.Tools.Outlook.v4.0.Utilities.xml
+C:\Users\ezhgyon\Desktop\OutlookMeetingAdd\OutlookMeetingAdd\obj\Debug\OutlookMeetingAdd.csprojResolveAssemblyReference.cache
+C:\Users\ezhgyon\Desktop\OutlookMeetingAdd\OutlookMeetingAdd\obj\Debug\OutlookMeetingAdd.MeetingSchedule.resources
+C:\Users\ezhgyon\Desktop\OutlookMeetingAdd\OutlookMeetingAdd\obj\Debug\OutlookMeetingAdd.Properties.Resources.resources
+C:\Users\ezhgyon\Desktop\OutlookMeetingAdd\OutlookMeetingAdd\obj\Debug\OutlookMeetingAdd.Ribbon1.resources
+C:\Users\ezhgyon\Desktop\OutlookMeetingAdd\OutlookMeetingAdd\obj\Debug\OutlookMeetingAdd.csproj.GenerateResource.Cache
+C:\Users\ezhgyon\Desktop\OutlookMeetingAdd\OutlookMeetingAdd\obj\Debug\OutlookMeetingAdd.dll
+C:\Users\ezhgyon\Desktop\OutlookMeetingAdd\OutlookMeetingAdd\obj\Debug\OutlookMeetingAdd.pdb
