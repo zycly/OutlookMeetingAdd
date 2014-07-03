@@ -433,7 +433,9 @@ namespace OutlookMeetingAdd
         
         private void button2_Click(object sender, EventArgs e)
         {
-           
+           ///////////////////////////////////This is my first time to use git coroperation////////////////////////////////////
+
+
             ////////////////////////////////////获取与会人Email////////////////////////////////////////////////////////////////
             #region
             Outlook.Application app = new Outlook.Application();
