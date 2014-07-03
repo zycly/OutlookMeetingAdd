@@ -42,9 +42,7 @@ namespace OutlookMeetingAdd
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.comboBox3 = new System.Windows.Forms.ComboBox();
             this.button2 = new System.Windows.Forms.Button();
-            this.dataGridView2 = new System.Windows.Forms.DataGridView();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             this.SuspendLayout();
             // 
             // label2
@@ -133,7 +131,7 @@ namespace OutlookMeetingAdd
             dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle1;
-            this.dataGridView1.Location = new System.Drawing.Point(208, 113);
+            this.dataGridView1.Location = new System.Drawing.Point(12, 113);
             this.dataGridView1.Name = "dataGridView1";
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
@@ -143,7 +141,7 @@ namespace OutlookMeetingAdd
             dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.dataGridView1.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
-            this.dataGridView1.Size = new System.Drawing.Size(312, 230);
+            this.dataGridView1.Size = new System.Drawing.Size(531, 230);
             this.dataGridView1.TabIndex = 16;
             this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
             // 
@@ -274,24 +272,13 @@ namespace OutlookMeetingAdd
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(390, 7);
+            this.button2.Location = new System.Drawing.Point(266, 76);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(130, 38);
+            this.button2.Size = new System.Drawing.Size(254, 25);
             this.button2.TabIndex = 19;
             this.button2.Text = "Check UserTime";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
-            // dataGridView2
-            // 
-            this.dataGridView2.AllowUserToAddRows = false;
-            this.dataGridView2.BackgroundColor = System.Drawing.SystemColors.ButtonFace;
-            this.dataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView2.Location = new System.Drawing.Point(16, 113);
-            this.dataGridView2.Name = "dataGridView2";
-            this.dataGridView2.Size = new System.Drawing.Size(172, 230);
-            this.dataGridView2.TabIndex = 20;
-            this.dataGridView2.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView2_CellContentClick);
             // 
             // MeetingSchedule
             // 
@@ -299,7 +286,6 @@ namespace OutlookMeetingAdd
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlLight;
             this.ClientSize = new System.Drawing.Size(555, 355);
-            this.Controls.Add(this.dataGridView2);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.comboBox3);
             this.Controls.Add(this.comboBox1);
@@ -315,7 +301,6 @@ namespace OutlookMeetingAdd
             this.Text = "MeetingRoomSelection";
             this.Load += new System.EventHandler(this.MeetingSchedule_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -330,7 +315,6 @@ namespace OutlookMeetingAdd
         private ComboBox comboBox1;
         private ComboBox comboBox3;
         private Button button2;
-        private DataGridView dataGridView2;
 
     }
      #endregion
