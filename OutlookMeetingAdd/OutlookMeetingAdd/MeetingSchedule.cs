@@ -26,8 +26,8 @@ namespace OutlookMeetingAdd
 
         private DateTime start;
         private DateTime end;
-        private static int count_cmp=0;
         private int Global = 0;
+        private List<integer> list=new List<integer>(); 
 
 
 
@@ -48,6 +48,7 @@ namespace OutlookMeetingAdd
         */
         #endregion
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -127,7 +128,7 @@ namespace OutlookMeetingAdd
         {
 
             
-            ////////////////////////////////获取上海地区会议室的信息////////////////////////////////////////////////////////////
+            ////////////////////////////////Get Shanghai MeetingRoom Location///////////////////////////////////////////////////
             #region
             string myRoomList = "PDLRDCMEET@ex1.eapac.ericsson.se";
             ExpandGroupResults myRoomLists = service.ExpandGroup(myRoomList);
@@ -146,7 +147,7 @@ namespace OutlookMeetingAdd
 
 
 
-            /////////////////////////获取某一时间段内的所有会议数据信息/////////////////////////////////////////////////////////
+            /////////////////////////get the MeetingRoom Location information in a specified period////////////////////////////
             #region
             /*
                 foreach (EmailAddress address in roomAddresses)
@@ -177,7 +178,7 @@ namespace OutlookMeetingAdd
 
 
 
-            ///////////////////////显示会议室free/busy///////////////////////////////////////////////////////////////////////////  
+            //////////////////////display the meetingroom free/busy status//////////////////////////////////////////////////////  
             #region
             AvailabilityOptions myOptions = new AvailabilityOptions();
             myOptions.RequestedFreeBusyView = FreeBusyViewType.FreeBusyMerged;
@@ -240,7 +241,7 @@ namespace OutlookMeetingAdd
 
 
 
-            //////////////////////匹配E栋地址///////////////////////////////////////////////////////////////////////////////////
+            //////////////////////Find the MeetingRoom belongs to E//////////////////////////////////////////////////////////////
             #region
             string pattern = @"(?<=\D\.)\d[?=.\d+]";
             int count_LKE = 0;
@@ -257,135 +258,76 @@ namespace OutlookMeetingAdd
                     count_LKE++;
                 }
             }
-            #endregion 
-            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
-            ////////////////////////////////////匹配楼层////////////////////////////////////////////////////////////////////////
             if (count_LKE == 0)
             {
                 MessageBox.Show("No MeetingRooms avalibility,Please reselect the MeetingTime!");
                 return;
             }
 
-            NameValueCollection location = new NameValueCollection();
-            NameValueCollection locat = new NameValueCollection();
+            #endregion 
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+            ////////////////////////////////////Sort the floor//////////////////////////////////////////////////////////////////
+            #region
+            NameValueCollection location       = new NameValueCollection();
+            NameValueCollection location_filter= new NameValueCollection();
+
             foreach (string lc in choosing_Buiding_location)
             {
                 foreach (Match match in rgx.Matches(lc))
                     location.Add(match.Value, lc);
-
             }
 
 
-            int diff;
-            int j = 0;
-            string[] sortkeys = location.AllKeys;
-            int[] sort = new int[location.Count];
-            int[] flag_l = new int[location.Count];
-
-
-
+            int t=0;
+            string temp;
             string pattern_1 = @"\d{1,}";
             Regex Rg = new Regex(pattern_1);
-            /*try
+            string[] sortkeys = location.AllKeys;
+            for (int i = 0; i < location.Count-1; i++)
             {
-                foreach (string t in sortkeys)
+                t = i;
+                for (int j = i + 1; j < location.Count; j++)
                 {
-                    diff = int.Parse(t) - int.Parse(Rg.Match(comboBox2.Text).Value);
-                    if (diff < 0)
-                    {
-                        diff = diff * (-1);
-                        flag_l[j] = 1;
-                    }
-                    sort[j] = diff;
-                    j++;
+                        if(Math.Abs((int.Parse(sortkeys[j])-int.Parse(Rg.Match(comboBox2.Text).Value)))<Math.Abs((int.Parse(sortkeys[t])-int.Parse(Rg.Match(comboBox2.Text).Value))))
+                            t = j;
                 }
-                int temp;
-                for (int i = 0; i < location.Count - 1; i++)
+                if (t != i)
                 {
-                    for (int k = 0; k < location.Count - 1 - i; k++)
-                    {
-                        if (sort[k] > sort[k + 1])
-                        {
-                            temp = sort[k];
-                            sort[k] = sort[k + 1];
-                            sort[k + 1] = temp;
-
-
-                            temp = flag_l[k];
-                            flag_l[k] = flag_l[k + 1];
-                            flag_l[k + 1] = temp;
-                        }
-                    }
+                    temp = sortkeys[i];
+                    sortkeys[i] = sortkeys[t];
+                    sortkeys[t] = temp;
                 }
             }
-            catch (Exception e3)
-            {
-                MessageBox.Show(e3+"Warning:" + "\r\n" + "Please check your location columm and then try again!");
-                return;
-            }*/
-        
 
-            /////////////////////////////////////////////////////////////////////
-
-            int num;
-            string change;
             for (int i = 0; i < location.Count; i++)
             {
-                if (flag_l[i] == 0)
-                    num = sort[i] + int.Parse(Rg.Match(comboBox2.SelectedItem.ToString()).Value);
-                else
-                {
-                    num = sort[i] * (-1) + int.Parse(Rg.Match(comboBox2.SelectedItem.ToString()).Value);
-                    flag_l[i] = 0;
-                }
-
-                if (num > 0 && num < 10)
-                {
-                    change = "0" + num.ToString();
-                }
-                else
-                    change = num.ToString();
-
-                locat.Add(change, location[change]);
+                location_filter.Add(sortkeys[i], location[sortkeys[i]]);   
             }
-            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
+           
+          
             int iter = 0;
             bool flag_T = true;
             string pattern_2 = @"^[^@]+";
             Regex st = new Regex(pattern_2);
             Regex reg = new Regex(",");
 
-            count_cmp++;
-            foreach (string str in locat.Keys)
+
+            
+            
+            foreach (string str in location_filter.Keys)
             {
-                string[] svec = reg.Split(locat[str]);
+                string[] svec = reg.Split(location_filter[str]);
 
                 foreach (string s in svec)
                 {
-                    DataGridViewRow row = new DataGridViewRow();
 
-
-                    DataGridViewTextBoxCell textEdit = new DataGridViewTextBoxCell();
-                    textEdit.Value = Start.ToString();
-                    row.Cells.Add(textEdit);
-
-                    DataGridViewButtonCell btnEdit = new DataGridViewButtonCell();
-                    btnEdit.Value = st.Match(s).Value;
-                    btnEdit.Tag = s;
-                    btnEdit.FlatStyle = FlatStyle.Popup;
-                    row.Cells.Add(btnEdit);
-
-                    DataGridViewTextBoxCell textedit = new DataGridViewTextBoxCell();
-                    textedit.Value = int.Parse(Rg.Match(s).Value).ToString();
-                    row.Cells.Add(textedit);
-
-                    dataGridView1.Rows.Add(row);
-
+                    integer suggest_information = new integer(Start.ToString(), st.Match(s).Value, int.Parse(Rg.Match(s).Value).ToString());
+                    list.Add(suggest_information);
                     iter++;
                     if (iter > 2)
                     {
@@ -397,12 +339,13 @@ namespace OutlookMeetingAdd
                     break;
             }
         }
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            #endregion
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
-        ///////////////////////Repaint Datagridview1///////////////////////////////////////////////////////////////////////////  /////////////
-        #region
+            ///////////////////////Repaint Datagridview1///////////////////////////////////////////////////////////////////////
+            #region
         private void MergeCellInOneColumn(DataGridView dgv, List<int> columnIndexList, DataGridViewCellPaintingEventArgs e)
         {
             if (columnIndexList.Contains(e.ColumnIndex) && e.RowIndex != -1)
@@ -437,7 +380,7 @@ namespace OutlookMeetingAdd
                 {
                     e.Graphics.DrawString((String)e.Value, e.CellStyle.Font,
                         Brushes.Black, e.CellBounds.X + 2,
-                        e.CellBounds.Y + 5, StringFormat.GenericDefault);
+                        e.CellBounds.Y +5, StringFormat.GenericDefault);
                 }
 
                 e.Handled = true;
@@ -449,13 +392,13 @@ namespace OutlookMeetingAdd
             MergeCellInOneColumn(dataGridView1, indexs, e);
         }
         #endregion 
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
         private void button2_Click(object sender, EventArgs e)
         {
-            ////////////////////////////////////获取与会人Email////////////////////////////////////////////////////////////////
+            ////////////////////////////////////get attendees Email////////////////////////////////////////////////////////////////
             #region
             Outlook.Application app = new Outlook.Application();
             List<AttendeeInfo> attendees = new List<AttendeeInfo>();
@@ -497,7 +440,7 @@ namespace OutlookMeetingAdd
 
 
 
-            ////////////////////////////////////datagrid1初始化////////////////////////////////////////////////////////////////
+            ////////////////////////////////////datagrid1 initial////////////////////////////////////////////////////////////////
             #region
             if (Global != 0)
             {
@@ -534,7 +477,7 @@ namespace OutlookMeetingAdd
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-            ///////////////////////////////////////获取与会人时间信息//////////////////////////////////////////////////////////
+            ///////////////////////////////////////get the attendes's information////////////////////////////////////////////////
             #region
             AvailabilityOptions availabilityOptions = new AvailabilityOptions();
             var dateSpan = item.End.Subtract(item.Start);
@@ -563,7 +506,19 @@ namespace OutlookMeetingAdd
                  
                     if ((DateTime.Compare(calEvent.StartTime, item.Start) <= 0 && DateTime.Compare(calEvent.EndTime, item.End) >= 0) || (DateTime.Compare(calEvent.EndTime, item.End) < 0 && DateTime.Compare(calEvent.EndTime, item.Start) > 0) || (DateTime.Compare(calEvent.StartTime, item.End) < 0 && DateTime.Compare(calEvent.StartTime, item.Start) > 0))
                     {
-                        suggestion_flag = false;
+                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+                        string message = "Conflict:"+calEvent.StartTime.ToShortTimeString() + "~" + calEvent.EndTime.ToShortTimeString();
+                        string caption = "Warning";
+                        DialogResult result;
+
+                        // Displays the MessageBox.
+
+                        result = MessageBox.Show(message, caption,buttons);
+
+                        if (result == System.Windows.Forms.DialogResult.Yes)
+                        {
+                            suggestion_flag = false;
+                        }                  
                     }      
                 }
             }
@@ -603,12 +558,43 @@ namespace OutlookMeetingAdd
             }
             else
                 str.Add(item.Start);
+
+
+
             for (int i = 0; i < str.Count; i++)
             {
                 Select_MeetingRoom(str[i], str[i].Add(TimeSpan.FromMinutes(availabilityOptions.MeetingDuration)));
                 if (i > 1)
                     break;
             }
+
+
+            foreach (integer information in list)
+            {
+                DataGridViewRow row = new DataGridViewRow();
+
+                DataGridViewTextBoxCell textedit = new DataGridViewTextBoxCell();
+                textedit.Value = information.MeetingTime;
+                row.Cells.Add(textedit);
+
+
+                DataGridViewButtonCell btnEdit = new DataGridViewButtonCell();
+                btnEdit.Value =information.MeetingRoomLocation;
+               // btnEdit.Tag = information.MeetingRoomLocation + "@ericsson.com";
+                btnEdit.FlatStyle = FlatStyle.Popup;
+                row.Cells.Add(btnEdit);
+
+                DataGridViewTextBoxCell textEdit = new DataGridViewTextBoxCell();
+                textEdit.Value = information.Floor;
+                row.Cells.Add(textEdit);
+
+
+                dataGridView1.Rows.Add(row);
+            }
+
+
+
+
             #endregion
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
