@@ -30,18 +30,24 @@ namespace OutlookMeetingAdd
         private int Global = 0;
 
 
+
+
         public Outlook.AppointmentItem item;
         public ExchangeService service;
 
- 
-        private void dataGridView1_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
+
+        ///////////////////////////////////////Paint datagridview1 index//////////////////////////////////////////////////////////////////////////////////
+        #region
+        /* private void dataGridView1_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
         {
             using (SolidBrush b = new SolidBrush(dataGridView1.RowHeadersDefaultCellStyle.ForeColor))
             {
                 e.Graphics.DrawString((e.RowIndex + 1).ToString(System.Globalization.CultureInfo.CurrentUICulture), e.InheritedRowStyle.Font, b, e.RowBounds.Location.X + 20, e.RowBounds.Location.Y + 4);
             }
         }
-
+        */
+        #endregion
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -109,6 +115,7 @@ namespace OutlookMeetingAdd
 
         }
 
+
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             int index = comboBox1.SelectedIndex;
@@ -169,7 +176,8 @@ namespace OutlookMeetingAdd
 
 
 
-            ///////////////////////显示会议室free/busy/////////////////////////////////////////////////////////////////////////  
+
+            ///////////////////////显示会议室free/busy///////////////////////////////////////////////////////////////////////////  
             #region
             AvailabilityOptions myOptions = new AvailabilityOptions();
             myOptions.RequestedFreeBusyView = FreeBusyViewType.FreeBusyMerged;
@@ -228,9 +236,12 @@ namespace OutlookMeetingAdd
                 count++;
             }
             #endregion
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-            ///////////////////////////////////匹配办公地点/////////////////////////////////////
+
+            //////////////////////匹配E栋地址///////////////////////////////////////////////////////////////////////////////////
+            #region
             string pattern = @"(?<=\D\.)\d[?=.\d+]";
             int count_LKE = 0;
             //////conf.cn.sh.0a.03.0308.09.aries@ericsson.com
@@ -246,9 +257,12 @@ namespace OutlookMeetingAdd
                     count_LKE++;
                 }
             }
-            ////////////////////////////////////匹配楼层/////////////////////////////////////////
+            #endregion 
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+
+            ////////////////////////////////////匹配楼层////////////////////////////////////////////////////////////////////////
             if (count_LKE == 0)
             {
                 MessageBox.Show("No MeetingRooms avalibility,Please reselect the MeetingTime!");
@@ -273,27 +287,9 @@ namespace OutlookMeetingAdd
 
 
 
-
-            /*Array.Sort(sortkeys);
-            foreach (string key in sortkeys)
-            {
-                locat.Add(key, location[key]);
-            }
-            foreach (string str in locat.Keys)
-            {
-                textBox3.Text += (str.ToString() + "\r\n");
-                string[] svec = reg.Split(locat[str]);
-                foreach (string s in svec)
-                {
-                    textBox3.Text += (s.ToString() + "\r\n");
-                }
-                textBox3.Text+=("\r\n");
-            }*/
-
-
             string pattern_1 = @"\d{1,}";
             Regex Rg = new Regex(pattern_1);
-            try
+            /*try
             {
                 foreach (string t in sortkeys)
                 {
@@ -327,9 +323,11 @@ namespace OutlookMeetingAdd
             }
             catch (Exception e3)
             {
-                MessageBox.Show("Warning:" + "\r\n" + "Please check your location columm and then try again!");
+                MessageBox.Show(e3+"Warning:" + "\r\n" + "Please check your location columm and then try again!");
                 return;
-            }
+            }*/
+        
+
             /////////////////////////////////////////////////////////////////////
 
             int num;
@@ -353,7 +351,7 @@ namespace OutlookMeetingAdd
 
                 locat.Add(change, location[change]);
             }
-            ////////////////////////////////////////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
             int iter = 0;
@@ -398,12 +396,61 @@ namespace OutlookMeetingAdd
                 if (!flag_T)
                     break;
             }
-            
-           
-           
-            /////////////////////////////////////////////////////////////////////////////////////////////////
-
         }
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+        ///////////////////////Repaint Datagridview1///////////////////////////////////////////////////////////////////////////  /////////////
+        #region
+        private void MergeCellInOneColumn(DataGridView dgv, List<int> columnIndexList, DataGridViewCellPaintingEventArgs e)
+        {
+            if (columnIndexList.Contains(e.ColumnIndex) && e.RowIndex != -1)
+            {
+                Brush gridBrush = new SolidBrush(dgv.GridColor);
+                Brush backBrush = new SolidBrush(e.CellStyle.BackColor);
+                Pen gridLinePen = new Pen(gridBrush);
+
+                //擦除
+                e.Graphics.FillRectangle(backBrush, e.CellBounds);
+
+                //画右边线
+                e.Graphics.DrawLine(gridLinePen,
+                   e.CellBounds.Right - 1,
+                   e.CellBounds.Top,
+                   e.CellBounds.Right - 1,
+                   e.CellBounds.Bottom - 1);
+
+                //画底边线
+                if ((e.RowIndex < dgv.Rows.Count - 1 && dgv.Rows[e.RowIndex + 1].Cells[e.ColumnIndex].Value.ToString() != e.Value.ToString()) ||
+                    e.RowIndex == dgv.Rows.Count - 1)
+                {
+                    e.Graphics.DrawLine(gridLinePen,
+                        e.CellBounds.Left,
+                        e.CellBounds.Bottom - 1,
+                        e.CellBounds.Right - 1,
+                        e.CellBounds.Bottom - 1);
+                }
+
+                //写文本
+                if (e.RowIndex == 0 || dgv.Rows[e.RowIndex - 1].Cells[e.ColumnIndex].Value.ToString() != e.Value.ToString())
+                {
+                    e.Graphics.DrawString((String)e.Value, e.CellStyle.Font,
+                        Brushes.Black, e.CellBounds.X + 2,
+                        e.CellBounds.Y + 5, StringFormat.GenericDefault);
+                }
+
+                e.Handled = true;
+            }
+        }
+        private void dataGridView1_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
+        {
+            List<int> indexs = new List<int>() { 0, 1 };
+            MergeCellInOneColumn(dataGridView1, indexs, e);
+        }
+        #endregion 
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
+
 
 
         private void button2_Click(object sender, EventArgs e)
@@ -462,6 +509,7 @@ namespace OutlookMeetingAdd
                 DataGridViewTextBoxColumn ct = new DataGridViewTextBoxColumn();
                 ct.Name = "Suggested Meeting Time";
                 dataGridView1.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                ct.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
                 dataGridView1.Columns.Add(ct);
 
 
@@ -470,15 +518,16 @@ namespace OutlookMeetingAdd
                 column_dg1.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
                 column_dg1.UseColumnTextForButtonValue = true;
                 dataGridView1.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                dataGridView1.RowPostPaint += new System.Windows.Forms.DataGridViewRowPostPaintEventHandler(this.dataGridView1_RowPostPaint);
+              //  dataGridView1.RowPostPaint += new System.Windows.Forms.DataGridViewRowPostPaintEventHandler(this.dataGridView1_RowPostPaint);
                 dataGridView1.Columns.Add(column_dg1);
 
                 DataGridViewTextBoxColumn col = new DataGridViewTextBoxColumn();
                 col.Name = "Floor";
                 dataGridView1.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
                 dataGridView1.Columns.Add(col);
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+                dataGridView1.RowHeadersVisible = false;
+                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             }
             Global++;
             #endregion
@@ -486,6 +535,7 @@ namespace OutlookMeetingAdd
 
 
             ///////////////////////////////////////获取与会人时间信息//////////////////////////////////////////////////////////
+            #region
             AvailabilityOptions availabilityOptions = new AvailabilityOptions();
             var dateSpan = item.End.Subtract(item.Start);
             availabilityOptions.MeetingDuration = dateSpan.Hours * 60 + dateSpan.Minutes;
@@ -559,6 +609,9 @@ namespace OutlookMeetingAdd
                 if (i > 1)
                     break;
             }
+            #endregion
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
         }
     }
 }
