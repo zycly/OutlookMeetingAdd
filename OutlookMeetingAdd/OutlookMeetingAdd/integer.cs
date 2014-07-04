@@ -11,7 +11,6 @@ namespace OutlookMeetingAdd
         public string MeetingRoomLocation;
         public string Floor;
 
-
         public integer()
         {
             MeetingTime = null;
