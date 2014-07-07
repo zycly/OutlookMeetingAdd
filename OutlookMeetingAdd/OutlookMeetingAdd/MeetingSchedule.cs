@@ -69,10 +69,10 @@ namespace OutlookMeetingAdd
                         {
                             
                             str.MeetingStatus = Microsoft.Office.Interop.Outlook.OlMeetingStatus.olMeeting;
-                            str.Location = dg.Rows[e.RowIndex].Cells[1].Tag.ToString();
                             str.Start = new DateTime(start.Year, start.Month, start.Day, start.Hour, start.Minute, 0);
                             str.End = new DateTime(end.Year, end.Month, end.Day, end.Hour, end.Minute, 0);
-                            Outlook.Recipient recipient = str.Recipients.Add(dg.Rows[e.RowIndex].Cells[1].Tag.ToString().Trim());
+                            str.Location = dg.Rows[e.RowIndex].Cells[1].Value + "@ericsson.com";
+                            Outlook.Recipient recipient = str.Recipients.Add(dg.Rows[e.RowIndex].Cells[1].Value+"@ericsson.com");
                         }
                         this.Close();
                     }
@@ -85,6 +85,9 @@ namespace OutlookMeetingAdd
         private void MeetingSchedule_Load(object sender, EventArgs e)
         {
             int index=0;
+
+            comboBox2.SelectedIndex = 2;
+            comboBox2.Enabled = false;
 
             if (DateTime.Compare(DateTime.Now, new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, 0, 0)) > 0 && DateTime.Compare(DateTime.Now, new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, 30, 0)) < 0)
             {
@@ -124,7 +127,7 @@ namespace OutlookMeetingAdd
          }
 
 
-        public void Select_MeetingRoom(DateTime Start, DateTime End)
+        public int Select_MeetingRoom(DateTime Start, DateTime End)
         {
 
             
@@ -217,13 +220,13 @@ namespace OutlookMeetingAdd
                         {
                             MessageBox.Show("Please select the time not more than a day");
                             Flag = false;
-                            break;
+                            return 0;
                         }
-                    }
+                    } 
                     else
                     {
                         MessageBox.Show("Start time must be greater than the end time");
-                        return;
+                        return 0;
                     }
                 }
                 if (!Flag)
@@ -262,7 +265,7 @@ namespace OutlookMeetingAdd
             if (count_LKE == 0)
             {
                 MessageBox.Show("No MeetingRooms avalibility,Please reselect the MeetingTime!");
-                return;
+                return 0;
             }
 
             #endregion 
@@ -338,6 +341,9 @@ namespace OutlookMeetingAdd
                 if (!flag_T)
                     break;
             }
+
+
+            return 1;
         }
             #endregion
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -345,7 +351,7 @@ namespace OutlookMeetingAdd
 
 
             ///////////////////////Repaint Datagridview1///////////////////////////////////////////////////////////////////////
-            #region
+ 
         private void MergeCellInOneColumn(DataGridView dgv, List<int> columnIndexList, DataGridViewCellPaintingEventArgs e)
         {
             if (columnIndexList.Contains(e.ColumnIndex) && e.RowIndex != -1)
@@ -391,7 +397,6 @@ namespace OutlookMeetingAdd
             List<int> indexs = new List<int>() { 0, 1 };
             MergeCellInOneColumn(dataGridView1, indexs, e);
         }
-        #endregion 
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -470,6 +475,7 @@ namespace OutlookMeetingAdd
                 dataGridView1.Columns.Add(col);
 
                 dataGridView1.RowHeadersVisible = false;
+               
                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             }
             Global++;
@@ -498,28 +504,40 @@ namespace OutlookMeetingAdd
 
             bool suggestion_flag=true;
             List<DateTime> str = new List<DateTime>();
+            int counts=0;
+            string conflict_number=null;
+            bool conflict_flag = true;
+            Regex Rg = new Regex("^[^@]+");
             foreach (AttendeeAvailability availability in results.AttendeesAvailability)
             {
-            
+
+                //MessageBox.Show(attendees[counts].SmtpAddress);
                 foreach (CalendarEvent calEvent in availability.CalendarEvents)
                 {
-                 
+                    
                     if ((DateTime.Compare(calEvent.StartTime, item.Start) <= 0 && DateTime.Compare(calEvent.EndTime, item.End) >= 0) || (DateTime.Compare(calEvent.EndTime, item.End) < 0 && DateTime.Compare(calEvent.EndTime, item.Start) > 0) || (DateTime.Compare(calEvent.StartTime, item.End) < 0 && DateTime.Compare(calEvent.StartTime, item.Start) > 0))
                     {
-                        MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                        string message = "Conflict:"+calEvent.StartTime.ToShortTimeString() + "~" + calEvent.EndTime.ToShortTimeString();
-                        string caption = "Warning";
-                        DialogResult result;
-
-                        // Displays the MessageBox.
-
-                        result = MessageBox.Show(message, caption,buttons);
-
-                        if (result == System.Windows.Forms.DialogResult.Yes)
-                        {
-                            suggestion_flag = false;
-                        }                  
+                        conflict_number += attendees[counts].SmtpAddress+" ";
+                        conflict_flag = false;
                     }      
+                }
+                counts++;
+            }
+
+            if (!conflict_flag)
+            {
+                MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+                string message = "Conflict:" + Rg.Match(conflict_number).Value.ToString();
+                string caption = "Warning";
+                DialogResult result;
+
+                // Displays the MessageBox.
+
+                result = MessageBox.Show(message, caption, buttons);
+
+                if (result == System.Windows.Forms.DialogResult.Yes)
+                {
+                    suggestion_flag = false;
                 }
             }
 
@@ -563,7 +581,8 @@ namespace OutlookMeetingAdd
 
             for (int i = 0; i < str.Count; i++)
             {
-                Select_MeetingRoom(str[i], str[i].Add(TimeSpan.FromMinutes(availabilityOptions.MeetingDuration)));
+                if (Select_MeetingRoom(str[i], str[i].Add(TimeSpan.FromMinutes(availabilityOptions.MeetingDuration))) == 0)
+                    break;
                 if (i > 1)
                     break;
             }
@@ -591,7 +610,7 @@ namespace OutlookMeetingAdd
 
                 dataGridView1.Rows.Add(row);
             }
-
+            list.Clear();
 
 
 
