@@ -69,8 +69,8 @@ namespace OutlookMeetingAdd
                         {
                             
                             str.MeetingStatus = Microsoft.Office.Interop.Outlook.OlMeetingStatus.olMeeting;
-                            str.Start = new DateTime(start.Year, start.Month, start.Day, start.Hour, start.Minute, 0);
-                            str.End = new DateTime(end.Year, end.Month, end.Day, end.Hour, end.Minute, 0);
+                            str.Start = Convert.ToDateTime(dg.Rows[e.RowIndex].Cells[0].Value);
+                            str.End = str.Start.AddHours(end.Subtract(start).Hours).AddMinutes(end.Subtract(start).Minutes);
                             str.Location = dg.Rows[e.RowIndex].Cells[1].Value + "@ericsson.com";
                             Outlook.Recipient recipient = str.Recipients.Add(dg.Rows[e.RowIndex].Cells[1].Value+"@ericsson.com");
                         }
@@ -194,7 +194,7 @@ namespace OutlookMeetingAdd
             start = Start;
             end = End;
 
-
+        
 
             int count = 0;
             int test = 0;             /////调试计数
@@ -490,13 +490,15 @@ namespace OutlookMeetingAdd
             {
                 var dateSpan = item.End.Subtract(item.Start);
                 availabilityOptions.MeetingDuration = dateSpan.Hours * 60 + dateSpan.Minutes;
+              
             }
             else
             {
-                var dateSpan = Convert.ToDateTime(dateTimePicker1.Value.Date + " " + comboBox1.SelectedItem).Subtract(Convert.ToDateTime(dateTimePicker2.Value.Date + " " + comboBox3.SelectedItem));
-                availabilityOptions.MeetingDuration = dateSpan.Hours * 60 + dateSpan.Minutes;
-                MessageBox.Show(availabilityOptions.MeetingDuration.ToString());
+                var dateSpan = new DateTime(dateTimePicker2.Value.Year, dateTimePicker2.Value.Month, dateTimePicker2.Value.Day, Convert.ToDateTime(comboBox3.SelectedItem).Hour, Convert.ToDateTime(comboBox3.SelectedItem).Minute, 0).Subtract(new DateTime(dateTimePicker1.Value.Year, dateTimePicker1.Value.Month, dateTimePicker1.Value.Day, Convert.ToDateTime(comboBox1.SelectedItem).Hour, Convert.ToDateTime(comboBox1.SelectedItem).Minute, 0));
+             //   MessageBox.Show(dateSpan.Minutes.ToString());
+                availabilityOptions.MeetingDuration = dateSpan.Hours * 60 + dateSpan.Minutes;   
             }
+            
             availabilityOptions.MaximumNonWorkHoursSuggestionsPerDay = 0;
             availabilityOptions.MaximumSuggestionsPerDay = 20;
             availabilityOptions.GoodSuggestionThreshold = 49;
@@ -519,8 +521,6 @@ namespace OutlookMeetingAdd
             Regex Rg = new Regex("^[^@]+");
             foreach (AttendeeAvailability availability in results.AttendeesAvailability)
             {
-
-                //MessageBox.Show(attendees[counts].SmtpAddress);
                 foreach (CalendarEvent calEvent in availability.CalendarEvents)
                 {
                     
@@ -540,10 +540,9 @@ namespace OutlookMeetingAdd
                 string caption = "Warning";
                 DialogResult result;
 
+
                 // Displays the MessageBox.
-
                 result = MessageBox.Show(message, caption, buttons);
-
                 if (result == System.Windows.Forms.DialogResult.Yes)
                 {
                     suggestion_flag = false;
@@ -588,7 +587,9 @@ namespace OutlookMeetingAdd
                 if (Global == 0)
                     str.Add(item.Start);
                 else
-                    str.Add(dateTimePicker1.Value);
+                {
+                    str.Add(new DateTime(dateTimePicker1.Value.Year, dateTimePicker1.Value.Month, dateTimePicker1.Value.Day, Convert.ToDateTime(comboBox1.SelectedItem).Hour, Convert.ToDateTime(comboBox1.SelectedItem).Minute, 0));
+                }
             }
 
 
@@ -610,7 +611,6 @@ namespace OutlookMeetingAdd
                 textedit.Value = information.MeetingTime;
                 row.Cells.Add(textedit);
 
-
                 DataGridViewButtonCell btnEdit = new DataGridViewButtonCell();
                 btnEdit.Value =information.MeetingRoomLocation;
                // btnEdit.Tag = information.MeetingRoomLocation + "@ericsson.com";
@@ -624,7 +624,7 @@ namespace OutlookMeetingAdd
 
                 dataGridView1.Rows.Add(row);
             }
-
+            str.Clear();
             list.Clear();
             Global++;
 
