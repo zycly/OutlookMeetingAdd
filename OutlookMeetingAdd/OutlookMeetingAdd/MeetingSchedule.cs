@@ -24,8 +24,8 @@ namespace OutlookMeetingAdd
             InitializeComponent();   
         }
 
-        private DateTime start;
-        private DateTime end;
+        public DateTime start;
+        public DateTime end;
         private int Global = 0;
         private List<integer> list=new List<integer>(); 
 
@@ -490,13 +490,17 @@ namespace OutlookMeetingAdd
             {
                 var dateSpan = item.End.Subtract(item.Start);
                 availabilityOptions.MeetingDuration = dateSpan.Hours * 60 + dateSpan.Minutes;
+                start = item.Start;
+                end = item.End;
               
             }
             else
             {
                 var dateSpan = new DateTime(dateTimePicker2.Value.Year, dateTimePicker2.Value.Month, dateTimePicker2.Value.Day, Convert.ToDateTime(comboBox3.SelectedItem).Hour, Convert.ToDateTime(comboBox3.SelectedItem).Minute, 0).Subtract(new DateTime(dateTimePicker1.Value.Year, dateTimePicker1.Value.Month, dateTimePicker1.Value.Day, Convert.ToDateTime(comboBox1.SelectedItem).Hour, Convert.ToDateTime(comboBox1.SelectedItem).Minute, 0));
-             //   MessageBox.Show(dateSpan.Minutes.ToString());
-                availabilityOptions.MeetingDuration = dateSpan.Hours * 60 + dateSpan.Minutes;   
+                availabilityOptions.MeetingDuration = dateSpan.Hours * 60 + dateSpan.Minutes;
+
+                start = new DateTime(dateTimePicker1.Value.Year, dateTimePicker1.Value.Month, dateTimePicker1.Value.Day, Convert.ToDateTime(comboBox1.SelectedItem).Hour, Convert.ToDateTime(comboBox1.SelectedItem).Minute, 0);
+                end = start.Add(TimeSpan.FromMinutes(availabilityOptions.MeetingDuration));
             }
             
             availabilityOptions.MaximumNonWorkHoursSuggestionsPerDay = 0;
@@ -514,18 +518,20 @@ namespace OutlookMeetingAdd
 
 
             bool suggestion_flag=true;
+            bool conflict_flag = true;
             List<DateTime> str = new List<DateTime>();
             int counts=0;
             string conflict_number=null;
-            bool conflict_flag = true;
+           
             Regex Rg = new Regex("^[^@]+");
             foreach (AttendeeAvailability availability in results.AttendeesAvailability)
             {
                 foreach (CalendarEvent calEvent in availability.CalendarEvents)
                 {
                     
-                    if ((DateTime.Compare(calEvent.StartTime, item.Start) <= 0 && DateTime.Compare(calEvent.EndTime, item.End) >= 0) || (DateTime.Compare(calEvent.EndTime, item.End) < 0 && DateTime.Compare(calEvent.EndTime, item.Start) > 0) || (DateTime.Compare(calEvent.StartTime, item.End) < 0 && DateTime.Compare(calEvent.StartTime, item.Start) > 0))
+                    if ((DateTime.Compare(calEvent.StartTime, start) <= 0 && DateTime.Compare(calEvent.EndTime, end) >= 0) || (DateTime.Compare(calEvent.EndTime, end) < 0 && DateTime.Compare(calEvent.EndTime,start) > 0) || (DateTime.Compare(calEvent.StartTime, end) < 0 && DateTime.Compare(calEvent.StartTime, start) > 0))
                     {
+                        MessageBox.Show("Conflict!");
                         conflict_number += attendees[counts].SmtpAddress+" ";
                         conflict_flag = false;
                     }      
@@ -624,7 +630,6 @@ namespace OutlookMeetingAdd
 
                 dataGridView1.Rows.Add(row);
             }
-            str.Clear();
             list.Clear();
             Global++;
 
