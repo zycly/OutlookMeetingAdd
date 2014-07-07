@@ -478,7 +478,7 @@ namespace OutlookMeetingAdd
                
                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             }
-            Global++;
+           
             #endregion
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -486,8 +486,17 @@ namespace OutlookMeetingAdd
             ///////////////////////////////////////get the attendes's information////////////////////////////////////////////////
             #region
             AvailabilityOptions availabilityOptions = new AvailabilityOptions();
-            var dateSpan = item.End.Subtract(item.Start);
-            availabilityOptions.MeetingDuration = dateSpan.Hours * 60 + dateSpan.Minutes;
+            if (Global == 0)
+            {
+                var dateSpan = item.End.Subtract(item.Start);
+                availabilityOptions.MeetingDuration = dateSpan.Hours * 60 + dateSpan.Minutes;
+            }
+            else
+            {
+                var dateSpan = Convert.ToDateTime(dateTimePicker1.Value.Date + " " + comboBox1.SelectedItem).Subtract(Convert.ToDateTime(dateTimePicker2.Value.Date + " " + comboBox3.SelectedItem));
+                availabilityOptions.MeetingDuration = dateSpan.Hours * 60 + dateSpan.Minutes;
+                MessageBox.Show(availabilityOptions.MeetingDuration.ToString());
+            }
             availabilityOptions.MaximumNonWorkHoursSuggestionsPerDay = 0;
             availabilityOptions.MaximumSuggestionsPerDay = 20;
             availabilityOptions.GoodSuggestionThreshold = 49;
@@ -575,7 +584,12 @@ namespace OutlookMeetingAdd
                 }
             }
             else
-                str.Add(item.Start);
+            {
+                if (Global == 0)
+                    str.Add(item.Start);
+                else
+                    str.Add(dateTimePicker1.Value);
+            }
 
 
 
@@ -610,8 +624,9 @@ namespace OutlookMeetingAdd
 
                 dataGridView1.Rows.Add(row);
             }
-            list.Clear();
 
+            list.Clear();
+            Global++;
 
 
             #endregion
