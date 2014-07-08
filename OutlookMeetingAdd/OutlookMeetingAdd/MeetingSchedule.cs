@@ -457,7 +457,7 @@ namespace OutlookMeetingAdd
                 DataGridViewTextBoxColumn ct = new DataGridViewTextBoxColumn();
                 ct.Name = "Suggested Meeting Time";
                 dataGridView1.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                ct.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                ct.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
                 dataGridView1.Columns.Add(ct);
 
 
@@ -497,6 +497,7 @@ namespace OutlookMeetingAdd
             else
             {
                 var dateSpan = new DateTime(dateTimePicker2.Value.Year, dateTimePicker2.Value.Month, dateTimePicker2.Value.Day, Convert.ToDateTime(comboBox3.SelectedItem).Hour, Convert.ToDateTime(comboBox3.SelectedItem).Minute, 0).Subtract(new DateTime(dateTimePicker1.Value.Year, dateTimePicker1.Value.Month, dateTimePicker1.Value.Day, Convert.ToDateTime(comboBox1.SelectedItem).Hour, Convert.ToDateTime(comboBox1.SelectedItem).Minute, 0));
+               // MessageBox.Show(dateSpan.Minutes.ToString());
                 availabilityOptions.MeetingDuration = dateSpan.Hours * 60 + dateSpan.Minutes;
 
                 start = new DateTime(dateTimePicker1.Value.Year, dateTimePicker1.Value.Month, dateTimePicker1.Value.Day, Convert.ToDateTime(comboBox1.SelectedItem).Hour, Convert.ToDateTime(comboBox1.SelectedItem).Minute, 0);
@@ -531,7 +532,7 @@ namespace OutlookMeetingAdd
                     
                     if ((DateTime.Compare(calEvent.StartTime, start) <= 0 && DateTime.Compare(calEvent.EndTime, end) >= 0) || (DateTime.Compare(calEvent.EndTime, end) < 0 && DateTime.Compare(calEvent.EndTime,start) > 0) || (DateTime.Compare(calEvent.StartTime, end) < 0 && DateTime.Compare(calEvent.StartTime, start) > 0))
                     {
-                        MessageBox.Show("Conflict!");
+                       // MessageBox.Show("Conflict!");
                         conflict_number += attendees[counts].SmtpAddress+" ";
                         conflict_flag = false;
                     }      
@@ -637,6 +638,11 @@ namespace OutlookMeetingAdd
             #endregion
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+        }
+
+        private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
+        {
+            dateTimePicker2.Value = dateTimePicker1.Value;
         }
     }
 }
