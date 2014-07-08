@@ -89,6 +89,17 @@ namespace OutlookMeetingAdd
             comboBox2.SelectedIndex = 2;
             comboBox2.Enabled = false;
 
+            Outlook.Application app = new Outlook.Application();
+            if (app.ActiveWindow() is Outlook._Inspector)
+            {
+                Outlook.Inspector inspector = app.ActiveInspector();
+                if (inspector.CurrentItem is Outlook.AppointmentItem)
+                {
+                    item = inspector.CurrentItem;
+                }
+            }
+
+            /*
             if (DateTime.Compare(DateTime.Now, new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, 0, 0)) > 0 && DateTime.Compare(DateTime.Now, new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, 30, 0)) < 0)
             {
                 index = 2 * DateTime.Now.Hour + 1;
@@ -101,6 +112,14 @@ namespace OutlookMeetingAdd
             
             }
             this.comboBox3.SelectedIndex = index + 1;
+             */
+
+
+            dateTimePicker1.Value = new DateTime(item.Start.Year,item.Start.Month,item.Start.Day,0,0,0);
+            dateTimePicker2.Value = new DateTime(item.End.Year, item.End.Month, item.End.Day, 0, 0, 0);
+            index = 2 * item.Start.Hour;
+            this.comboBox1.SelectedIndex = index+1;
+            this.comboBox3.SelectedIndex = 2*item.End.Hour
 
 
             /////////////////////////////////连接exchange服务器/////////////////////////////////////////////////////////////////
@@ -411,35 +430,27 @@ namespace OutlookMeetingAdd
             string replacement = ".";
             Regex cheat = new Regex(pattern_3);
 
-            if (app.ActiveWindow() is Outlook._Inspector)
+
+
+            foreach (Outlook.Recipient acquird in item.Recipients)
             {
-                Outlook.Inspector inspector = app.ActiveInspector();
-                if (inspector.CurrentItem is Outlook.AppointmentItem)
+                attendees.Add(new AttendeeInfo()
                 {
-                    item = inspector.CurrentItem;
-                    foreach (Outlook.Recipient acquird in item.Recipients)
-                    {
-                        attendees.Add(new AttendeeInfo()
-                        {
-                            SmtpAddress = cheat.Replace(acquird.Name, replacement) + "@ericsson.com",
-                            // AttendeeType = MeetingAttendeeType.Required
-                        });
-                    }
-
-
-                }
-                //////////////////////测试邮箱名是否被正确加载////////////////////////////
-                /*EmailMessage message = new EmailMessage(service);
-
-                // Set properties on the email message.
-                message.Subject = "Company Soccer Team";
-                message.Body = "Are you interested in joining?";
-                message.ToRecipients.Add(attendees[0].SmtpAddress);
-
-                // Send the email message and save a copy.
-                // This method call results in a CreateItem call to EWS.
-                message.Send();*/
+                    SmtpAddress = cheat.Replace(acquird.Name, replacement) + "@ericsson.com",
+                    // AttendeeType = MeetingAttendeeType.Required
+                });
             }
+            //////////////////////测试邮箱名是否被正确加载////////////////////////////
+            /*EmailMessage message = new EmailMessage(service);
+
+            // Set properties on the email message.
+            message.Subject = "Company Soccer Team";
+            message.Body = "Are you interested in joining?";
+            message.ToRecipients.Add(attendees[0].SmtpAddress);
+
+            // Send the email message and save a copy.
+            // This method call results in a CreateItem call to EWS.
+            message.Send();*/
             #endregion
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -472,6 +483,7 @@ namespace OutlookMeetingAdd
                 DataGridViewTextBoxColumn col = new DataGridViewTextBoxColumn();
                 col.Name = "Floor";
                 dataGridView1.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                col.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
                 dataGridView1.Columns.Add(col);
 
                 dataGridView1.RowHeadersVisible = false;
@@ -533,7 +545,7 @@ namespace OutlookMeetingAdd
                     if ((DateTime.Compare(calEvent.StartTime, start) <= 0 && DateTime.Compare(calEvent.EndTime, end) >= 0) || (DateTime.Compare(calEvent.EndTime, end) < 0 && DateTime.Compare(calEvent.EndTime,start) > 0) || (DateTime.Compare(calEvent.StartTime, end) < 0 && DateTime.Compare(calEvent.StartTime, start) > 0))
                     {
                        // MessageBox.Show("Conflict!");
-                        conflict_number += attendees[counts].SmtpAddress+" ";
+                        conflict_number += Rg.Match(attendees[counts].SmtpAddress).Value.ToString()+" ";
                         conflict_flag = false;
                     }      
                 }
@@ -543,7 +555,7 @@ namespace OutlookMeetingAdd
             if (!conflict_flag)
             {
                 MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                string message = "Conflict:" + Rg.Match(conflict_number).Value.ToString();
+                string message = "Conflict:" + conflict_number;
                 string caption = "Warning";
                 DialogResult result;
 
