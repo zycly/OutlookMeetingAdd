@@ -11,6 +11,7 @@ using Microsoft.Exchange.WebServices;
 using Microsoft.Exchange.WebServices.Data;
 using System.Text.RegularExpressions;
 using System.Collections;
+using System.Threading;
 using System.Collections.Specialized;
 using Outlook = Microsoft.Office.Interop.Outlook;
 
@@ -21,15 +22,13 @@ namespace OutlookMeetingAdd
     {
         public MeetingSchedule()
         {
-            InitializeComponent();   
+            InitializeComponent();
         }
 
         public DateTime start;
         public DateTime end;
         private int Global = 0;
-        private List<integer> list=new List<integer>(); 
-
-
+        private List<integer> list=new List<integer>();
 
 
         public Outlook.AppointmentItem item;
@@ -99,43 +98,24 @@ namespace OutlookMeetingAdd
                 }
             }
 
-            /*
-            if (DateTime.Compare(DateTime.Now, new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, 0, 0)) > 0 && DateTime.Compare(DateTime.Now, new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, 30, 0)) < 0)
-            {
-                index = 2 * DateTime.Now.Hour + 1;
-                this.comboBox1.SelectedIndex =index;
-            }
-            if (DateTime.Compare(DateTime.Now, new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, 30, 0)) > 0 && DateTime.Compare(DateTime.Now, new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.AddHours(1).Hour, 0, 0)) < 0)
-            {
-                index = 2 * DateTime.Now.Hour + 2;
-                this.comboBox1.SelectedIndex = index;
-            
-            }
-            this.comboBox3.SelectedIndex = index + 1;
-             */
-
-
             dateTimePicker1.Value = new DateTime(item.Start.Year,item.Start.Month,item.Start.Day,0,0,0);
             dateTimePicker2.Value = new DateTime(item.End.Year, item.End.Month, item.End.Day, 0, 0, 0);
-            index = 2 * item.Start.Hour;
-            this.comboBox1.SelectedIndex = index+1;
-            this.comboBox3.SelectedIndex = 2*item.End.Hour
 
 
-            /////////////////////////////////连接exchange服务器/////////////////////////////////////////////////////////////////
-            #region
-            service = new ExchangeService(ExchangeVersion.Exchange2010_SP1);
-            //以windows账户用户名和密码登陆
-            //service.Credentials = new NetworkCredential("ezhgyon", "zyc&900916", "ericsson");
-            //默认以window用户名密码登陆
-            service.UseDefaultCredentials = true;
-            //自动获取邮箱URL
-            //service.AutodiscoverUrl("yongchan.zhang@ericsson.com", RedirectionUrlValidationCallback);
-            //手动设置exchange服务器地址
-            service.Url = new Uri("https://mail-ao.internal.ericsson.com/EWS/Exchange.asmx");
-            #endregion
-            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            if (DateTime.Compare(item.Start, new DateTime(item.Start.Year, item.Start.Month, item.Start.Day, item.Start.Hour, 0, 0)) == 0)
+            {
+                index = 2 * item.Start.Hour;
+                this.comboBox1.SelectedIndex = index;
+            }
+            if (DateTime.Compare(item.Start, new DateTime(item.Start.Year, item.Start.Month, item.Start.Day, item.Start.Hour, 30, 0)) == 0)
+            {
+                index = 2 * item.Start.Hour + 1;
+                this.comboBox1.SelectedIndex = index;
+            }
 
+            int duration = item.End.Subtract(item.Start).Hours * 60 + item.End.Subtract(item.Start).Minutes;
+            this.comboBox3.SelectedIndex = this.comboBox1.SelectedIndex + duration / 30;           
+            
         }
 
 
@@ -419,9 +399,24 @@ namespace OutlookMeetingAdd
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-
         private void button2_Click(object sender, EventArgs e)
         {
+           /////////////////////////////////连接exchange服务器/////////////////////////////////////////////////////////////////
+            #region
+            service = new ExchangeService(ExchangeVersion.Exchange2010_SP1);
+            //以windows账户用户名和密码登陆
+            //service.Credentials = new NetworkCredential("ezhgyon", "zyc&900916", "ericsson");
+            //默认以window用户名密码登陆
+            service.UseDefaultCredentials = true;
+            //自动获取邮箱URL
+            //service.AutodiscoverUrl("yongchan.zhang@ericsson.com", RedirectionUrlValidationCallback);
+            //手动设置exchange服务器地址
+            service.Url = new Uri("https://mail-ao.internal.ericsson.com/EWS/Exchange.asmx");
+            #endregion
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
             ////////////////////////////////////get attendees Email////////////////////////////////////////////////////////////////
             #region
             Outlook.Application app = new Outlook.Application();
@@ -430,6 +425,8 @@ namespace OutlookMeetingAdd
             string replacement = ".";
             Regex cheat = new Regex(pattern_3);
 
+
+          //  dataGridView1.Visible = true;
 
 
             foreach (Outlook.Recipient acquird in item.Recipients)
@@ -456,18 +453,29 @@ namespace OutlookMeetingAdd
 
 
 
-            ////////////////////////////////////datagrid1 initial////////////////////////////////////////////////////////////////
+            ////////////////////////////////////datagrid1 initial/////////////////////////////////////////////////////////////////////////
             #region
+            AvailabilityOptions availabilityOptions = new AvailabilityOptions();
             if (Global != 0)
             {
                 dataGridView1.Rows.Clear();
+
+                var dateSpan = item.End.Subtract(item.Start);
+                availabilityOptions.MeetingDuration = dateSpan.Hours * 60 + dateSpan.Minutes;
+                start = item.Start;
+                end = item.End;
+
             }
             else
             {
+                var dateSpan = new DateTime(dateTimePicker2.Value.Year, dateTimePicker2.Value.Month, dateTimePicker2.Value.Day, Convert.ToDateTime(comboBox3.SelectedItem).Hour, Convert.ToDateTime(comboBox3.SelectedItem).Minute, 0).Subtract(new DateTime(dateTimePicker1.Value.Year, dateTimePicker1.Value.Month, dateTimePicker1.Value.Day, Convert.ToDateTime(comboBox1.SelectedItem).Hour, Convert.ToDateTime(comboBox1.SelectedItem).Minute, 0));
+                availabilityOptions.MeetingDuration = dateSpan.Hours * 60 + dateSpan.Minutes;
+                start = new DateTime(dateTimePicker1.Value.Year, dateTimePicker1.Value.Month, dateTimePicker1.Value.Day, Convert.ToDateTime(comboBox1.SelectedItem).Hour, Convert.ToDateTime(comboBox1.SelectedItem).Minute, 0);
+                end = start.Add(TimeSpan.FromMinutes(availabilityOptions.MeetingDuration));
+
                 ///////////////////////////////////////datagridview1设置///////////////////////////////////////////////////////////////////
-                DataGridViewTextBoxColumn ct = new DataGridViewTextBoxColumn();
-                ct.Name = "Suggested Meeting Time";
-                dataGridView1.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+               /* DataGridViewTextBoxColumn ct = new DataGridViewTextBoxColumn();
+                ct.Name = "Suggested Meeting Time"; 
                 ct.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
                 dataGridView1.Columns.Add(ct);
 
@@ -477,7 +485,7 @@ namespace OutlookMeetingAdd
                 column_dg1.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
                 column_dg1.UseColumnTextForButtonValue = true;
                 dataGridView1.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-              //  dataGridView1.RowPostPaint += new System.Windows.Forms.DataGridViewRowPostPaintEventHandler(this.dataGridView1_RowPostPaint);
+                //  dataGridView1.RowPostPaint += new System.Windows.Forms.DataGridViewRowPostPaintEventHandler(this.dataGridView1_RowPostPaint);
                 dataGridView1.Columns.Add(column_dg1);
 
                 DataGridViewTextBoxColumn col = new DataGridViewTextBoxColumn();
@@ -485,42 +493,24 @@ namespace OutlookMeetingAdd
                 dataGridView1.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
                 col.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
                 dataGridView1.Columns.Add(col);
-
+*/
+                dataGridView1.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
                 dataGridView1.RowHeadersVisible = false;
-               
                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             }
-           
+
             #endregion
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
             ///////////////////////////////////////get the attendes's information////////////////////////////////////////////////
             #region
-            AvailabilityOptions availabilityOptions = new AvailabilityOptions();
-            if (Global == 0)
-            {
-                var dateSpan = item.End.Subtract(item.Start);
-                availabilityOptions.MeetingDuration = dateSpan.Hours * 60 + dateSpan.Minutes;
-                start = item.Start;
-                end = item.End;
-              
-            }
-            else
-            {
-                var dateSpan = new DateTime(dateTimePicker2.Value.Year, dateTimePicker2.Value.Month, dateTimePicker2.Value.Day, Convert.ToDateTime(comboBox3.SelectedItem).Hour, Convert.ToDateTime(comboBox3.SelectedItem).Minute, 0).Subtract(new DateTime(dateTimePicker1.Value.Year, dateTimePicker1.Value.Month, dateTimePicker1.Value.Day, Convert.ToDateTime(comboBox1.SelectedItem).Hour, Convert.ToDateTime(comboBox1.SelectedItem).Minute, 0));
-               // MessageBox.Show(dateSpan.Minutes.ToString());
-                availabilityOptions.MeetingDuration = dateSpan.Hours * 60 + dateSpan.Minutes;
-
-                start = new DateTime(dateTimePicker1.Value.Year, dateTimePicker1.Value.Month, dateTimePicker1.Value.Day, Convert.ToDateTime(comboBox1.SelectedItem).Hour, Convert.ToDateTime(comboBox1.SelectedItem).Minute, 0);
-                end = start.Add(TimeSpan.FromMinutes(availabilityOptions.MeetingDuration));
-            }
-            
+           
             availabilityOptions.MaximumNonWorkHoursSuggestionsPerDay = 0;
-            availabilityOptions.MaximumSuggestionsPerDay = 20;
+            availabilityOptions.MaximumSuggestionsPerDay = 5;
             availabilityOptions.GoodSuggestionThreshold = 49;
             availabilityOptions.MinimumSuggestionQuality = SuggestionQuality.Excellent;
-            availabilityOptions.DetailedSuggestionsWindow = new TimeWindow(item.Start, item.Start.AddDays(1));
+            availabilityOptions.DetailedSuggestionsWindow = new TimeWindow(start, start.AddDays(1));
             availabilityOptions.RequestedFreeBusyView = FreeBusyViewType.FreeBusy;
 
             GetUserAvailabilityResults results = service.GetUserAvailability(attendees,
@@ -530,24 +520,23 @@ namespace OutlookMeetingAdd
 
 
 
-            bool suggestion_flag=true;
+            bool suggestion_flag = true;
             bool conflict_flag = true;
             List<DateTime> str = new List<DateTime>();
-            int counts=0;
-            string conflict_number=null;
-           
+            int counts = 0;
+            string conflict_number = null;
+
             Regex Rg = new Regex("^[^@]+");
             foreach (AttendeeAvailability availability in results.AttendeesAvailability)
             {
                 foreach (CalendarEvent calEvent in availability.CalendarEvents)
                 {
-                    
-                    if ((DateTime.Compare(calEvent.StartTime, start) <= 0 && DateTime.Compare(calEvent.EndTime, end) >= 0) || (DateTime.Compare(calEvent.EndTime, end) < 0 && DateTime.Compare(calEvent.EndTime,start) > 0) || (DateTime.Compare(calEvent.StartTime, end) < 0 && DateTime.Compare(calEvent.StartTime, start) > 0))
+
+                    if ((DateTime.Compare(calEvent.StartTime, start) <= 0 && DateTime.Compare(calEvent.EndTime, end) >= 0) || (DateTime.Compare(calEvent.EndTime, end) < 0 && DateTime.Compare(calEvent.EndTime, start) > 0) || (DateTime.Compare(calEvent.StartTime, end) < 0 && DateTime.Compare(calEvent.StartTime, start) > 0))
                     {
-                       // MessageBox.Show("Conflict!");
-                        conflict_number += Rg.Match(attendees[counts].SmtpAddress).Value.ToString()+" ";
+                        conflict_number += Rg.Match(attendees[counts].SmtpAddress).Value.ToString() + " ";
                         conflict_flag = false;
-                    }      
+                    }
                 }
                 counts++;
             }
@@ -555,11 +544,9 @@ namespace OutlookMeetingAdd
             if (!conflict_flag)
             {
                 MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                string message = "Conflict:" + conflict_number;
-                string caption = "Warning";
+                string message = "  Tips:\n" + "           YES:Get Suggested Time\n" + "           NO:Ignore the Conflict\n\n" + "          Conflict:" + conflict_number;
+                string caption = "ATTENTION";
                 DialogResult result;
-
-
                 // Displays the MessageBox.
                 result = MessageBox.Show(message, caption, buttons);
                 if (result == System.Windows.Forms.DialogResult.Yes)
@@ -612,7 +599,6 @@ namespace OutlookMeetingAdd
             }
 
 
-
             for (int i = 0; i < str.Count; i++)
             {
                 if (Select_MeetingRoom(str[i], str[i].Add(TimeSpan.FromMinutes(availabilityOptions.MeetingDuration))) == 0)
@@ -631,8 +617,8 @@ namespace OutlookMeetingAdd
                 row.Cells.Add(textedit);
 
                 DataGridViewButtonCell btnEdit = new DataGridViewButtonCell();
-                btnEdit.Value =information.MeetingRoomLocation;
-               // btnEdit.Tag = information.MeetingRoomLocation + "@ericsson.com";
+                btnEdit.Value = information.MeetingRoomLocation;
+                // btnEdit.Tag = information.MeetingRoomLocation + "@ericsson.com";
                 btnEdit.FlatStyle = FlatStyle.Popup;
                 row.Cells.Add(btnEdit);
 
@@ -649,7 +635,6 @@ namespace OutlookMeetingAdd
 
             #endregion
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
         }
 
         private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
