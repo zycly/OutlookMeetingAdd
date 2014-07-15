@@ -459,22 +459,21 @@ namespace OutlookMeetingAdd
             if (Global != 0)
             {
                 dataGridView1.Rows.Clear();
-
+                var dateSpan = new DateTime(dateTimePicker2.Value.Year, dateTimePicker2.Value.Month, dateTimePicker2.Value.Day, Convert.ToDateTime(comboBox3.SelectedItem).Hour, Convert.ToDateTime(comboBox3.SelectedItem).Minute, 0).Subtract(new DateTime(dateTimePicker1.Value.Year, dateTimePicker1.Value.Month, dateTimePicker1.Value.Day, Convert.ToDateTime(comboBox1.SelectedItem).Hour, Convert.ToDateTime(comboBox1.SelectedItem).Minute, 0));
+                availabilityOptions.MeetingDuration = dateSpan.Hours * 60 + dateSpan.Minutes;
+                start = new DateTime(dateTimePicker1.Value.Year, dateTimePicker1.Value.Month, dateTimePicker1.Value.Day, Convert.ToDateTime(comboBox1.SelectedItem).Hour, Convert.ToDateTime(comboBox1.SelectedItem).Minute, 0);
+                end = start.Add(TimeSpan.FromMinutes(availabilityOptions.MeetingDuration));
+            }
+            else
+            {
                 var dateSpan = item.End.Subtract(item.Start);
                 availabilityOptions.MeetingDuration = dateSpan.Hours * 60 + dateSpan.Minutes;
                 start = item.Start;
                 end = item.End;
 
-            }
-            else
-            {
-                var dateSpan = new DateTime(dateTimePicker2.Value.Year, dateTimePicker2.Value.Month, dateTimePicker2.Value.Day, Convert.ToDateTime(comboBox3.SelectedItem).Hour, Convert.ToDateTime(comboBox3.SelectedItem).Minute, 0).Subtract(new DateTime(dateTimePicker1.Value.Year, dateTimePicker1.Value.Month, dateTimePicker1.Value.Day, Convert.ToDateTime(comboBox1.SelectedItem).Hour, Convert.ToDateTime(comboBox1.SelectedItem).Minute, 0));
-                availabilityOptions.MeetingDuration = dateSpan.Hours * 60 + dateSpan.Minutes;
-                start = new DateTime(dateTimePicker1.Value.Year, dateTimePicker1.Value.Month, dateTimePicker1.Value.Day, Convert.ToDateTime(comboBox1.SelectedItem).Hour, Convert.ToDateTime(comboBox1.SelectedItem).Minute, 0);
-                end = start.Add(TimeSpan.FromMinutes(availabilityOptions.MeetingDuration));
-
                 ///////////////////////////////////////datagridview1设置///////////////////////////////////////////////////////////////////
-               /* DataGridViewTextBoxColumn ct = new DataGridViewTextBoxColumn();
+               /* 
+                DataGridViewTextBoxColumn ct = new DataGridViewTextBoxColumn();
                 ct.Name = "Suggested Meeting Time"; 
                 ct.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
                 dataGridView1.Columns.Add(ct);
@@ -493,7 +492,7 @@ namespace OutlookMeetingAdd
                 dataGridView1.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
                 col.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
                 dataGridView1.Columns.Add(col);
-*/
+                */
                 dataGridView1.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
                 dataGridView1.RowHeadersVisible = false;
                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -599,36 +598,46 @@ namespace OutlookMeetingAdd
             }
 
 
+            bool flag = true;
             for (int i = 0; i < str.Count; i++)
             {
                 if (Select_MeetingRoom(str[i], str[i].Add(TimeSpan.FromMinutes(availabilityOptions.MeetingDuration))) == 0)
+                {
+                    flag = false;
                     break;
+                }
                 if (i > 1)
                     break;
             }
 
 
-            foreach (integer information in list)
+
+            if (flag)
             {
-                DataGridViewRow row = new DataGridViewRow();
+                foreach (integer information in list)
+                {
+                    DataGridViewRow row = new DataGridViewRow();
 
-                DataGridViewTextBoxCell textedit = new DataGridViewTextBoxCell();
-                textedit.Value = information.MeetingTime;
-                row.Cells.Add(textedit);
+                    DataGridViewTextBoxCell textedit = new DataGridViewTextBoxCell();
+                    textedit.Value = information.MeetingTime;
+                    row.Cells.Add(textedit);
 
-                DataGridViewButtonCell btnEdit = new DataGridViewButtonCell();
-                btnEdit.Value = information.MeetingRoomLocation;
-                // btnEdit.Tag = information.MeetingRoomLocation + "@ericsson.com";
-                btnEdit.FlatStyle = FlatStyle.Popup;
-                row.Cells.Add(btnEdit);
+                    DataGridViewButtonCell btnEdit = new DataGridViewButtonCell();
+                    btnEdit.Value = information.MeetingRoomLocation;
+                    // btnEdit.Tag = information.MeetingRoomLocation + "@ericsson.com";
+                    btnEdit.FlatStyle = FlatStyle.Popup;
+                    row.Cells.Add(btnEdit);
 
-                DataGridViewTextBoxCell textEdit = new DataGridViewTextBoxCell();
-                textEdit.Value = information.Floor;
-                row.Cells.Add(textEdit);
+                    DataGridViewTextBoxCell textEdit = new DataGridViewTextBoxCell();
+                    textEdit.Value = information.Floor;
+                    row.Cells.Add(textEdit);
 
 
-                dataGridView1.Rows.Add(row);
+                    dataGridView1.Rows.Add(row);
+                }
             }
+
+
             list.Clear();
             Global++;
 

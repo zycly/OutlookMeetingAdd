@@ -39,14 +39,14 @@ namespace OutlookMeetingAdd
             this.dateTimePicker2 = new System.Windows.Forms.DateTimePicker();
             this.comboBox2 = new System.Windows.Forms.ComboBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.SuggestedMeetingTime = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.MeetingRoomLocation = new System.Windows.Forms.DataGridViewButtonColumn();
+            this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.comboBox3 = new System.Windows.Forms.ComboBox();
             this.button2 = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
-            this.SuggestedMeetingTime = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.MeetingRoomLocation = new System.Windows.Forms.DataGridViewButtonColumn();
-            this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -153,6 +153,31 @@ namespace OutlookMeetingAdd
             this.dataGridView1.TabIndex = 16;
             this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
             this.dataGridView1.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.dataGridView1_CellPainting);
+            // 
+            // SuggestedMeetingTime
+            // 
+            this.SuggestedMeetingTime.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.SuggestedMeetingTime.HeaderText = "SuggestedMeetingTime";
+            this.SuggestedMeetingTime.Name = "SuggestedMeetingTime";
+            this.SuggestedMeetingTime.ReadOnly = true;
+            this.SuggestedMeetingTime.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.SuggestedMeetingTime.Width = 125;
+            // 
+            // MeetingRoomLocation
+            // 
+            this.MeetingRoomLocation.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.MeetingRoomLocation.HeaderText = "MeetingRoomLocation";
+            this.MeetingRoomLocation.Name = "MeetingRoomLocation";
+            this.MeetingRoomLocation.ReadOnly = true;
+            this.MeetingRoomLocation.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            // 
+            // Column1
+            // 
+            this.Column1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.Column1.HeaderText = "Floor";
+            this.Column1.Name = "Column1";
+            this.Column1.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column1.Width = 36;
             // 
             // comboBox1
             // 
@@ -282,9 +307,9 @@ namespace OutlookMeetingAdd
             // button2
             // 
             this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button2.Location = new System.Drawing.Point(386, 11);
+            this.button2.Location = new System.Drawing.Point(397, 11);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(65, 82);
+            this.button2.Size = new System.Drawing.Size(54, 82);
             this.button2.TabIndex = 19;
             this.button2.Text = "Check";
             this.button2.UseVisualStyleBackColor = true;
@@ -310,31 +335,6 @@ namespace OutlookMeetingAdd
             this.label5.Size = new System.Drawing.Size(112, 20);
             this.label5.TabIndex = 14;
             this.label5.Text = "Your Location:";
-            // 
-            // SuggestedMeetingTime
-            // 
-            this.SuggestedMeetingTime.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.SuggestedMeetingTime.HeaderText = "SuggestedMeetingTime";
-            this.SuggestedMeetingTime.Name = "SuggestedMeetingTime";
-            this.SuggestedMeetingTime.ReadOnly = true;
-            this.SuggestedMeetingTime.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.SuggestedMeetingTime.Width = 125;
-            // 
-            // MeetingRoomLocation
-            // 
-            this.MeetingRoomLocation.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.MeetingRoomLocation.HeaderText = "MeetingRoomLocation";
-            this.MeetingRoomLocation.Name = "MeetingRoomLocation";
-            this.MeetingRoomLocation.ReadOnly = true;
-            this.MeetingRoomLocation.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            // 
-            // Column1
-            // 
-            this.Column1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.Column1.HeaderText = "Floor";
-            this.Column1.Name = "Column1";
-            this.Column1.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column1.Width = 36;
             // 
             // MeetingSchedule
             // 

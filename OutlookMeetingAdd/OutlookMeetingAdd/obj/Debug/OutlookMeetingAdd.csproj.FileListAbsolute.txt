@@ -30,3 +30,5 @@ C:\zyc\git\ERICSSON_PROJECT\OutlookMeetingAdd\OutlookMeetingAdd\obj\Debug\Outloo
 C:\zyc\git\ERICSSON_PROJECT\OutlookMeetingAdd\OutlookMeetingAdd\obj\Debug\OutlookMeetingAdd.csproj.GenerateResource.Cache
 C:\zyc\git\ERICSSON_PROJECT\OutlookMeetingAdd\OutlookMeetingAdd\obj\Debug\OutlookMeetingAdd.dll
 C:\zyc\git\ERICSSON_PROJECT\OutlookMeetingAdd\OutlookMeetingAdd\obj\Debug\OutlookMeetingAdd.pdb
+C:\zyc\git\ERICSSON_PROJECT\OutlookMeetingAdd\OutlookMeetingAdd\bin\Debug\ManagedWifi.dll
+C:\zyc\git\ERICSSON_PROJECT\OutlookMeetingAdd\OutlookMeetingAdd\bin\Debug\ManagedWifi.pdb
