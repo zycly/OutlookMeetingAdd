@@ -317,10 +317,11 @@ namespace OutlookMeetingAdd
             // 
             // textBox1
             // 
-            this.textBox1.BackColor = System.Drawing.Color.Yellow;
+            this.textBox1.BackColor = System.Drawing.Color.SpringGreen;
+            this.textBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBox1.Location = new System.Drawing.Point(1, 335);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(576, 20);
+            this.textBox1.Size = new System.Drawing.Size(576, 26);
             this.textBox1.TabIndex = 20;
             this.textBox1.Text = "ALL RIGHTS RESERVED BY ERSICSSON";
             this.textBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
