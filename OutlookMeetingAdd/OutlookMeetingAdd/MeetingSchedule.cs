@@ -28,6 +28,7 @@ namespace OutlookMeetingAdd
         public DateTime start;
         public DateTime end;
         private int Global = 0;
+        private int verify = 0;
         private List<integer> list=new List<integer>();
 
 
@@ -126,7 +127,7 @@ namespace OutlookMeetingAdd
          }
 
 
-        public int Select_MeetingRoom(DateTime Start, DateTime End)
+        public int Select_MeetingRoom(DateTime Start, DateTime End,int str_count)
         {
 
             
@@ -263,7 +264,12 @@ namespace OutlookMeetingAdd
 
             if (count_LKE == 0)
             {
-                MessageBox.Show("No MeetingRooms avalibility,Please reselect the MeetingTime!");
+                if (str_count == 1)
+                    MessageBox.Show("No MeetingRooms avalibility,Please reselect the MeetingTime!");
+                else
+                {
+                    verify++;
+                }
                 return 0;
             }
 
@@ -401,7 +407,7 @@ namespace OutlookMeetingAdd
 
         private void button2_Click(object sender, EventArgs e)
         {
-           /////////////////////////////////连接exchange服务器/////////////////////////////////////////////////////////////////
+            /////////////////////////////////连接exchange服务器/////////////////////////////////////////////////////////////////
             #region
             service = new ExchangeService(ExchangeVersion.Exchange2010_SP1);
             //以windows账户用户名和密码登陆
@@ -506,7 +512,7 @@ namespace OutlookMeetingAdd
             #region
            
             availabilityOptions.MaximumNonWorkHoursSuggestionsPerDay = 0;
-            availabilityOptions.MaximumSuggestionsPerDay = 5;
+            availabilityOptions.MaximumSuggestionsPerDay = 10;
             availabilityOptions.GoodSuggestionThreshold = 49;
             availabilityOptions.MinimumSuggestionQuality = SuggestionQuality.Excellent;
             availabilityOptions.DetailedSuggestionsWindow = new TimeWindow(start, start.AddDays(1));
@@ -543,7 +549,7 @@ namespace OutlookMeetingAdd
             if (!conflict_flag)
             {
                 MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                string message = "  Tips:\n" + "           YES:Get Suggested Time\n" + "           NO:Ignore the Conflict\n\n" + "          Conflict:" + conflict_number;
+                string message = "  Tips:\n" + "           Yes:Get Suggested Time\n" + "           No:Ignore the Conflict\n\n" + "          Conflict:" + conflict_number;
                 string caption = "ATTENTION";
                 DialogResult result;
                 // Displays the MessageBox.
@@ -564,10 +570,10 @@ namespace OutlookMeetingAdd
                         if (timeSuggestion.MeetingTime.Hour >= 9)
                         {
                             str.Add(timeSuggestion.MeetingTime);
+          
                         }
                     }
                 }
-
                 int k = 0;
                 DateTime temp;
                 for (int s = 0; s < str.Count - 1; s++)
@@ -575,8 +581,8 @@ namespace OutlookMeetingAdd
                     k = s;
                     for (int j = s + 1; j < str.Count; j++)
                     {
-                        different = str[j].Subtract(item.Start);
-                        if (Math.Abs(different.Hours * 60 + different.Minutes) < Math.Abs(str[k].Subtract(item.Start).Hours * 60 + str[k].Subtract(item.Start).Minutes))
+                        different = str[j].Subtract(start);
+                        if (Math.Abs(different.Hours * 60 + different.Minutes) < Math.Abs(str[k].Subtract(start).Hours * 60 + str[k].Subtract(start).Minutes))
                             k = j;
                     }
                     if (k != s)
@@ -601,13 +607,17 @@ namespace OutlookMeetingAdd
             bool flag = true;
             for (int i = 0; i < str.Count; i++)
             {
-                if (Select_MeetingRoom(str[i], str[i].Add(TimeSpan.FromMinutes(availabilityOptions.MeetingDuration))) == 0)
+                if (Select_MeetingRoom(str[i], str[i].Add(TimeSpan.FromMinutes(availabilityOptions.MeetingDuration)),str.Count) == 0&&str.Count==1)
                 {
                     flag = false;
                     break;
                 }
                 if (i > 1)
+                {
+                    if(verify==3)
+                        MessageBox.Show("No MeetingRooms avalibility,Please reselect the MeetingTime!");
                     break;
+                }
             }
 
 
