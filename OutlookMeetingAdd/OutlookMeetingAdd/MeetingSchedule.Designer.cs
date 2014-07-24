@@ -33,6 +33,7 @@ namespace OutlookMeetingAdd
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -40,14 +41,14 @@ namespace OutlookMeetingAdd
             this.dateTimePicker2 = new System.Windows.Forms.DateTimePicker();
             this.comboBox2 = new System.Windows.Forms.ComboBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.SuggestedMeetingTime = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.MeetingRoomLocation = new System.Windows.Forms.DataGridViewButtonColumn();
+            this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.comboBox3 = new System.Windows.Forms.ComboBox();
             this.button2 = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
-            this.SuggestedMeetingTime = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.MeetingRoomLocation = new System.Windows.Forms.DataGridViewButtonColumn();
-            this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -142,7 +143,8 @@ namespace OutlookMeetingAdd
             this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle3;
             this.dataGridView1.Location = new System.Drawing.Point(0, 102);
             this.dataGridView1.Name = "dataGridView1";
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            this.dataGridView1.ReadOnly = true;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
             dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
@@ -150,10 +152,42 @@ namespace OutlookMeetingAdd
             dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.dataGridView1.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            this.dataGridView1.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView1.RowsDefaultCellStyle = dataGridViewCellStyle5;
             this.dataGridView1.Size = new System.Drawing.Size(577, 235);
             this.dataGridView1.TabIndex = 16;
             this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
             this.dataGridView1.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.dataGridView1_CellPainting);
+            // 
+            // SuggestedMeetingTime
+            // 
+            this.SuggestedMeetingTime.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SuggestedMeetingTime.DefaultCellStyle = dataGridViewCellStyle2;
+            this.SuggestedMeetingTime.HeaderText = "SuggestedMeetingTime";
+            this.SuggestedMeetingTime.Name = "SuggestedMeetingTime";
+            this.SuggestedMeetingTime.ReadOnly = true;
+            this.SuggestedMeetingTime.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.SuggestedMeetingTime.Width = 125;
+            // 
+            // MeetingRoomLocation
+            // 
+            this.MeetingRoomLocation.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.MeetingRoomLocation.HeaderText = "MeetingRoomLocation";
+            this.MeetingRoomLocation.Name = "MeetingRoomLocation";
+            this.MeetingRoomLocation.ReadOnly = true;
+            this.MeetingRoomLocation.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            // 
+            // Column1
+            // 
+            this.Column1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.Column1.HeaderText = "Floor";
+            this.Column1.Name = "Column1";
+            this.Column1.ReadOnly = true;
+            this.Column1.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column1.Width = 36;
             // 
             // comboBox1
             // 
@@ -300,7 +334,7 @@ namespace OutlookMeetingAdd
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(576, 25);
             this.textBox1.TabIndex = 20;
-            this.textBox1.Text = "ALL RIGHTS RESERVED BY ERSICSSON";
+            this.textBox1.Text = "ALL RIGHTS RESERVED BY ERSICSSON.COM";
             this.textBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label5
@@ -313,33 +347,6 @@ namespace OutlookMeetingAdd
             this.label5.Size = new System.Drawing.Size(107, 18);
             this.label5.TabIndex = 14;
             this.label5.Text = "Your Location:";
-            // 
-            // SuggestedMeetingTime
-            // 
-            this.SuggestedMeetingTime.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SuggestedMeetingTime.DefaultCellStyle = dataGridViewCellStyle2;
-            this.SuggestedMeetingTime.HeaderText = "SuggestedMeetingTime";
-            this.SuggestedMeetingTime.Name = "SuggestedMeetingTime";
-            this.SuggestedMeetingTime.ReadOnly = true;
-            this.SuggestedMeetingTime.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.SuggestedMeetingTime.Width = 125;
-            // 
-            // MeetingRoomLocation
-            // 
-            this.MeetingRoomLocation.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.MeetingRoomLocation.HeaderText = "MeetingRoomLocation";
-            this.MeetingRoomLocation.Name = "MeetingRoomLocation";
-            this.MeetingRoomLocation.ReadOnly = true;
-            this.MeetingRoomLocation.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            // 
-            // Column1
-            // 
-            this.Column1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.Column1.HeaderText = "Floor";
-            this.Column1.Name = "Column1";
-            this.Column1.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column1.Width = 36;
             // 
             // MeetingSchedule
             // 
