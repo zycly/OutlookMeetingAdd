@@ -29,6 +29,7 @@ namespace OutlookMeetingAdd
         public DateTime end;
         private int Global = 0;
         private int verify = 0;
+        private int sum = 0;
         private List<integer> list=new List<integer>();
 
 
@@ -88,6 +89,22 @@ namespace OutlookMeetingAdd
 
             comboBox2.SelectedIndex = 2;
             comboBox2.Enabled = false;
+
+
+            /////////////////////////////////连接exchange服务器/////////////////////////////////////////////////////////////////
+            #region
+            service = new ExchangeService(ExchangeVersion.Exchange2010_SP1);
+            //以windows账户用户名和密码登陆
+            //service.Credentials = new NetworkCredential("ezhgyon", "zyc&900916", "ericsson");
+            //默认以window用户名密码登陆
+            service.UseDefaultCredentials = true;
+            //自动获取邮箱URL
+            //service.AutodiscoverUrl("yongchan.zhang@ericsson.com", RedirectionUrlValidationCallback);
+            //手动设置exchange服务器地址
+            service.Url = new Uri("https://mail-ao.internal.ericsson.com/EWS/Exchange.asmx");
+            #endregion
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
             Outlook.Application app = new Outlook.Application();
             if (app.ActiveWindow() is Outlook._Inspector)
@@ -272,6 +289,10 @@ namespace OutlookMeetingAdd
                 }
                 return 0;
             }
+            else
+            {
+                sum++;
+            }
 
             #endregion 
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -407,22 +428,6 @@ namespace OutlookMeetingAdd
 
         private void button2_Click(object sender, EventArgs e)
         {
-            /////////////////////////////////连接exchange服务器/////////////////////////////////////////////////////////////////
-            #region
-            service = new ExchangeService(ExchangeVersion.Exchange2010_SP1);
-            //以windows账户用户名和密码登陆
-            //service.Credentials = new NetworkCredential("ezhgyon", "zyc&900916", "ericsson");
-            //默认以window用户名密码登陆
-            service.UseDefaultCredentials = true;
-            //自动获取邮箱URL
-            //service.AutodiscoverUrl("yongchan.zhang@ericsson.com", RedirectionUrlValidationCallback);
-            //手动设置exchange服务器地址
-            service.Url = new Uri("https://mail-ao.internal.ericsson.com/EWS/Exchange.asmx");
-            #endregion
-            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
             ////////////////////////////////////get attendees Email////////////////////////////////////////////////////////////////
             #region
             Outlook.Application app = new Outlook.Application();
@@ -612,9 +617,10 @@ namespace OutlookMeetingAdd
                     flag = false;
                     break;
                 }
-                if (i > 1)
+                if (sum==3)
                 {
-                    if(verify==3)
+                  
+                    if(verify==str.Count)
                         MessageBox.Show("No MeetingRooms avalibility,Please reselect the MeetingTime!");
                     break;
                 }
@@ -646,9 +652,8 @@ namespace OutlookMeetingAdd
                     dataGridView1.Rows.Add(row);
                 }
             }
-
-
             list.Clear();
+            sum = 0;
             Global++;
 
 
