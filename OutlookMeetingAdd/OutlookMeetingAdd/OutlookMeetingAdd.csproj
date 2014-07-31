@@ -217,8 +217,15 @@
     <Compile Include="MeetingSchedule.Designer.cs">
       <DependentUpon>MeetingSchedule.cs</DependentUpon>
     </Compile>
+    <Compile Include="MessageBoxManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="suggest.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="suggest.Designer.cs">
+      <DependentUpon>suggest.cs</DependentUpon>
     </Compile>
     <Compile Include="wificollection.cs" />
     <EmbeddedResource Include="MeetingSchedule.resx">
@@ -236,6 +243,9 @@
     </Compile>
     <EmbeddedResource Include="Ribbon1.resx">
       <DependentUpon>Ribbon1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="suggest.resx">
+      <DependentUpon>suggest.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="OutlookMeetingAdd_TemporaryKey.pfx" />

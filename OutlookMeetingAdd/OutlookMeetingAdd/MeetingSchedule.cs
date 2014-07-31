@@ -41,8 +41,6 @@ namespace OutlookMeetingAdd
          
         }
 
-        
-
         public DateTime start;
         public DateTime end;
         private int Global = 0;
@@ -209,7 +207,7 @@ namespace OutlookMeetingAdd
             myOptions.RequestedFreeBusyView = FreeBusyViewType.FreeBusyMerged;
             // Return a set of free/busy times.
             GetUserAvailabilityResults freeBusyResults = service.GetUserAvailability(attendees,
-                                                                            new TimeWindow(DateTime.Now, DateTime.Now.AddDays(7)),
+                                                                            new TimeWindow(DateTime.Now, DateTime.Now.AddDays(14)),
                                                                             AvailabilityData.FreeBusy, myOptions);
 
 
@@ -516,7 +514,7 @@ namespace OutlookMeetingAdd
             #endregion
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-            //MessageBox.Show("hello world");
+          
 
           
 
@@ -541,7 +539,11 @@ namespace OutlookMeetingAdd
             bool conflict_flag = true;
             List<DateTime> str = new List<DateTime>();
             int counts = 0;
-            string conflict_number = null;
+          
+
+
+            HashSet<string> conflict = new HashSet<string>();
+ 
 
             Regex Rg = new Regex("^[^@]+");
             foreach (AttendeeAvailability availability in results.AttendeesAvailability)
@@ -551,25 +553,57 @@ namespace OutlookMeetingAdd
 
                     if ((DateTime.Compare(calEvent.StartTime, start) <= 0 && DateTime.Compare(calEvent.EndTime, end) >= 0) || (DateTime.Compare(calEvent.EndTime, end) < 0 && DateTime.Compare(calEvent.EndTime, start) > 0) || (DateTime.Compare(calEvent.StartTime, end) < 0 && DateTime.Compare(calEvent.StartTime, start) > 0))
                     {
-                        conflict_number += Rg.Match(attendees[counts].SmtpAddress).Value.ToString() + " ";
+                        //MessageBox.Show(Rg.Match(attendees[counts].SmtpAddress).Value.ToString()+" "+calEvent.StartTime.ToString()+" "+calEvent.EndTime.ToString());
+                        //conflict_number += Rg.Match(attendees[counts].SmtpAddress).Value.ToString() + " ";
+                        conflict.Add(Rg.Match(attendees[counts].SmtpAddress).Value.ToString());
                         conflict_flag = false;
                     }
                 }
                 counts++;
             }
-
             if (!conflict_flag)
             {
-                MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                string message = "  Tips:\n" + "           Yes:Get Suggested Time\n" + "           No:Ignore the Conflict\n\n" + "          Conflict:" + conflict_number;
-                string caption = "ATTENTION";
+                string conflict_number ="Time Span:"+start.ToShortTimeString()+"-"+end.ToShortTimeString()+"\r\n\r\nConflict with ";
+                foreach (string svec in conflict)
+                    conflict_number +=svec + ",";
+
+               MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+               //string message = "  Tips:\n" + "           Yes:Get Suggested Time\n" + "           No :Ignore the Conflict\n\n" + "          Conflict:" + conflict_number;
+               // string message = "Conflict with"+conflict_number+"\r\n\r\n";
+                string caption = "Attention";
+
+                MessageBoxManager.Yes = "Suggest";
+                MessageBoxManager.No = "Ignore";
+                MessageBoxManager.Register();
+               // MessageBox.Show("This is a message...", "Test", MessageBoxButtons.OKCancel);
+        
+
                 DialogResult result;
                 // Displays the MessageBox.
-                result = MessageBox.Show(message, caption, buttons);
+                result = MessageBox.Show(conflict_number, caption, buttons, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1);
                 if (result == System.Windows.Forms.DialogResult.Yes)
                 {
                     suggestion_flag = false;
                 }
+
+                MessageBoxManager.Unregister();
+                
+                
+                /*suggest form_help = new suggest(conflict_number)
+                {
+                    Text = "Attention",
+                    StartPosition = FormStartPosition.CenterScreen
+                };
+                form_help.Show();
+                if (form_help.translation == 0)
+                {
+                    suggestion_flag = false;
+                    //
+                 * form_help.Close();
+                }*/
+                
+
+               
             }
 
             if (!suggestion_flag)
@@ -584,6 +618,10 @@ namespace OutlookMeetingAdd
                             str.Add(timeSuggestion.MeetingTime);
                         }
                     }
+                }
+                if (str.Count == 0)
+                {
+                    MessageBox.Show("Sorry it's already out of workingtime");
                 }
                 int k = 0;
                 DateTime temp;

@@ -334,7 +334,7 @@ namespace OutlookMeetingAdd
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(576, 25);
             this.textBox1.TabIndex = 20;
-            this.textBox1.Text = "ALL RIGHTS RESERVED BY ERSICSSON.COM";
+            this.textBox1.Text = "ALL RIGHTS RESERVED BY ERICSSON.COM";
             this.textBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label5
